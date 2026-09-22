@@ -1,19 +1,19 @@
 {
-  "file": "bg_front_yeongjegyo.svg",
+  "file": "bg_front_yeongjegyo.webp",
   "width": 1536,
   "height": 960,
-  "charHeight": 30,
+  "charHeight": 20,
   "stand": {
     "x": 50,
-    "y": 96
+    "y": 97
   },
   "walk": {
-    "minX": 30,
-    "maxX": 70
+    "minX": 38,
+    "maxX": 62
   },
   "walls": [
-    70,
-    45
+    76,
+    64
   ],
-  "endY": 18
+  "endY": 53
 }

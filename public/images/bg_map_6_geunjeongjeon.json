@@ -1,16 +1,16 @@
 {
-  "file": "bg_map_6_geunjeongjeon.svg",
+  "file": "bg_map_6_geunjeongjeon.webp",
   "width": 1536,
   "height": 960,
   "walk": {
-    "minX": 22,
-    "maxX": 78
+    "minX": 10,
+    "maxX": 90
   },
   "start": {
     "x": 50,
-    "y": 80
+    "y": 86
   },
-  "charHeight": 22,
-  "exitY": 14,
-  "noticeY": 60
+  "charHeight": 13,
+  "exitY": 44,
+  "noticeY": 62
 }

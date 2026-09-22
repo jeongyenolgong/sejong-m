@@ -1,15 +1,15 @@
 {
-  "file": "bg_map_1_yukjo.svg",
+  "file": "bg_map_1_yukjo.webp",
   "width": 1536,
   "height": 960,
   "walk": {
-    "minX": 22,
-    "maxX": 78
+    "minX": 30,
+    "maxX": 70
   },
   "start": {
     "x": 50,
-    "y": 80
+    "y": 85
   },
-  "charHeight": 22,
-  "exitY": 14
+  "charHeight": 13,
+  "exitY": 8
 }

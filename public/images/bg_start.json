@@ -1,27 +1,27 @@
 {
-  "file": "bg_start.svg",
+  "file": "bg_start.webp",
   "width": 1536,
   "height": 960,
   "clouds": [
     {
-      "file": "cut_cloud_1.svg",
-      "x": 8,
-      "y": 10,
-      "w": 22,
+      "file": "cut_cloud_1.webp",
+      "x": 9.9,
+      "y": 7.19,
+      "w": 11.91,
       "duration": 90
     },
     {
-      "file": "cut_cloud_2.svg",
-      "x": 52,
-      "y": 20,
-      "w": 16,
+      "file": "cut_cloud_2.webp",
+      "x": 50.07,
+      "y": 17.92,
+      "w": 6.38,
       "duration": 120
     },
     {
-      "file": "cut_cloud_3.svg",
-      "x": 30,
-      "y": 5,
-      "w": 26,
+      "file": "cut_cloud_3.webp",
+      "x": 73.11,
+      "y": 12.29,
+      "w": 9.7,
       "duration": 150
     }
   ]

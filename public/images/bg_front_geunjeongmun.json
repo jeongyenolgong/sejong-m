@@ -1,35 +1,35 @@
 {
-  "file": "bg_front_geunjeongmun.svg",
+  "file": "bg_front_geunjeongmun.webp",
   "width": 1536,
   "height": 960,
-  "charHeight": 30,
+  "charHeight": 18,
   "stand": {
     "x": 50,
-    "y": 96
+    "y": 97
   },
   "walk": {
     "minX": 30,
     "maxX": 70
   },
-  "pushY": 90,
+  "pushY": 83.2,
   "doorRange": {
-    "x1": 38,
-    "x2": 62
+    "x1": 42.97,
+    "x2": 56.7
   },
   "doors": {
     "left": {
-      "file": "cut_door_geunjeongmun_l.svg",
-      "x": 36,
-      "y": 34,
-      "w": 14,
-      "h": 56
+      "file": "cut_door_geunjeongmun_l.webp",
+      "x": 42.97,
+      "y": 55.42,
+      "w": 6.84,
+      "h": 21.88
     },
     "right": {
-      "file": "cut_door_geunjeongmun_r.svg",
-      "x": 50,
-      "y": 34,
-      "w": 14,
-      "h": 56
+      "file": "cut_door_geunjeongmun_r.webp",
+      "x": 49.8,
+      "y": 55.42,
+      "w": 6.9,
+      "h": 21.88
     }
   }
 }

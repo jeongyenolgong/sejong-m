@@ -1,15 +1,15 @@
 {
-  "file": "bg_map_8_sajeongjeon.svg",
+  "file": "bg_map_8_sajeongjeon.webp",
   "width": 1536,
   "height": 960,
   "walk": {
-    "minX": 22,
-    "maxX": 78
+    "minX": 12,
+    "maxX": 88
   },
   "start": {
     "x": 50,
-    "y": 80
+    "y": 85
   },
-  "charHeight": 22,
-  "audienceY": 30
+  "charHeight": 12,
+  "audienceY": 48
 }

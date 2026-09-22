@@ -1,13 +1,13 @@
 {
-  "file": "bg_audience.svg",
+  "file": "bg_audience.webp",
   "width": 1536,
   "height": 960,
-  "charHeight": 34,
+  "charHeight": 30,
   "stand": {
     "x": 50,
     "y": 98
   },
-  "stopY": 78,
+  "stopY": 80,
   "walk": {
     "minX": 40,
     "maxX": 60

@@ -1,19 +1,19 @@
 {
-  "file": "bg_map_3_heungnyemun.svg",
+  "file": "bg_map_3_heungnyemun.webp",
   "width": 1536,
   "height": 960,
   "walk": {
-    "minX": 22,
-    "maxX": 78
+    "minX": 10,
+    "maxX": 90
   },
   "start": {
     "x": 50,
-    "y": 80
+    "y": 85
   },
-  "charHeight": 22,
+  "charHeight": 13,
   "gate": {
-    "x1": 43,
-    "x2": 57,
-    "y": 18
+    "x1": 44,
+    "x2": 56,
+    "y": 61
   }
 }

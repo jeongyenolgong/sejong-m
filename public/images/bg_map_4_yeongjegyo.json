@@ -1,19 +1,19 @@
 {
-  "file": "bg_map_4_yeongjegyo.svg",
+  "file": "bg_map_4_yeongjegyo.webp",
   "width": 1536,
   "height": 960,
   "walk": {
-    "minX": 22,
-    "maxX": 78
+    "minX": 20,
+    "maxX": 80
   },
   "start": {
     "x": 50,
-    "y": 80
+    "y": 85
   },
-  "charHeight": 22,
+  "charHeight": 10,
   "gate": {
-    "x1": 43,
-    "x2": 57,
-    "y": 18
+    "x1": 44,
+    "x2": 56,
+    "y": 58
   }
 }
