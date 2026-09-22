@@ -23,6 +23,7 @@ export class DeviceKeyboard {
     this.onBackspace = null;
     this.onEnter = null;
     this.onHeight = null;     // 화면 자판 높이가 바뀌면(px)
+    this.onClose = null;      // 자판이 내려가면
     this.mode = 'text';
 
     this.input.addEventListener('input', () => this.read());
@@ -30,7 +31,7 @@ export class DeviceKeyboard {
       if (e.key === 'Enter') { e.preventDefault(); this.onEnter && this.onEnter(); }
       if (e.key === 'Backspace' && this.input.value === '') { this.onBackspace && this.onBackspace(); }
     });
-    this.input.addEventListener('blur', () => { this.reset(); this.report(); });
+    this.input.addEventListener('blur', () => { this.reset(); this.report(); if (this.onClose) this.onClose(); });
 
     this.vv = window.visualViewport;
     this.onResize = () => { window.scrollTo(0, 0); this.report(); };

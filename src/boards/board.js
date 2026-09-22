@@ -22,7 +22,8 @@ export class Board {
     this.dim = dim;
   }
 
-  async run(jamoId) {
+  // onLift — 판이 걷히기 시작할 때 부른다(문 앞 화면이 캐릭터·조작키를 다시 보이게 한다)
+  async run(jamoId, { onLift } = {}) {
     const item = jamoData.find((j) => j.id === jamoId);
     const hints = hintData.filter((h) => h.word === item.word).sort((a, b) => a.step - b.step);
     const check = checkData.find((c) => c.word === item.word);
@@ -37,6 +38,11 @@ export class Board {
     this.layer.append(this.frame);
     this.keyboard = new DeviceKeyboard(this.layer);
     this.keyboard.onHeight = () => this.fitKeyboard();
+    // 기기 자판의 내리기 키로 내려가도 커서가 사라진다 (8-2)
+    this.keyboard.onClose = () => {
+      if (this.panel && this.panel.markCursor) { this.panel.cursorOn = false; this.panel.markCursor(); }
+      if (this.panel && this.panel.drawCells) this.panel.drawCells();
+    };
 
     // 판 밖(빈 곳)을 누르면 자판만 내려간다
     this.onOutside = (e) => {
@@ -84,6 +90,7 @@ export class Board {
     checkPanel.destroy();
     this.frame.classList.add('lifting');
     this.dim.classList.remove('on');
+    if (onLift) onLift();
     await wait(reduced() ? 0 : T.boardLift);
     this.keyboard.destroy();
     this.layer.removeEventListener('pointerdown', this.onOutside);

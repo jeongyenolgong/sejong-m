@@ -8,10 +8,13 @@
   position: absolute; left: calc(50% - 32 * var(--u)); width: calc(64 * var(--u)); overflow: hidden;
   --h: 20;
   height: calc(var(--h) * var(--u));
+  top: max(calc(2.4 * var(--u)), calc((100vh - 15.5 * var(--u) - var(--h) * var(--u)) / 2));
   top: max(calc(2.4 * var(--u)), calc((100dvh - 15.5 * var(--u) - var(--h) * var(--u)) / 2));
   transition: height .5s cubic-bezier(.3, 0, .2, 1), top .5s cubic-bezier(.3, 0, .2, 1);
 }
 .gboard.tall { --h: 35.9; }
+/* 판 가운데 높이 */
+.archive .side { top: calc(max(calc(2.4 * var(--u)), calc((100vh - 15.5 * var(--u) - 20 * var(--u)) / 2)) + 10 * var(--u)); }
 .archive .side { top: calc(max(calc(2.4 * var(--u)), calc((100dvh - 15.5 * var(--u) - 20 * var(--u)) / 2)) + 10 * var(--u)); transform: translateY(-50%); }
 .archive .g-prev { left: calc(50% - 39.4 * var(--u)); }
 .archive .g-next { left: calc(50% + 33.4 * var(--u)); right: auto; }

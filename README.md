@@ -34,7 +34,7 @@ npm run preview    # dist/를 띄워 본다
 - **자바스크립트 · CSS · JSON** 뿐입니다. 화면 틀(React 등)은 쓰지 않습니다.
 - [Vite](https://vite.dev/) — 개발 서버와 배포 파일 묶기에만 씁니다.
 - [exceljs](https://github.com/exceljs/exceljs) — 엑셀을 JSON으로 구울 때만 씁니다(개발용 · 게임에는 안 실립니다).
-- [jsPDF](https://github.com/parallax/jsPDF) · [html2canvas](https://html2canvas.hertzen.com/) — 마지막 [저장]에서 PDF를 만들 때만 불러옵니다.
+- [jsPDF](https://github.com/parallax/jsPDF) — 마지막 [저장]에서 PDF를 만들 때만 불러옵니다. 판은 캔버스에 직접 그려 담습니다(`src/lib/pdf.js`).
 - 글꼴 **고운바탕**(SIL OFL) — `src/fonts/`에 실어 보냅니다(학교 망에서 바깥 글꼴이 막혀도 뜹니다). 고운바탕에는 한자가 없어 알림창의 한자(光化門 등)는 기기 글꼴로 나옵니다.
 - 서버가 없습니다(깃헙 페이지 정적 배포). 로그인·계정·개인정보가 없고, 진행은 그 기기의 브라우저(localStorage)에만 남습니다.
 

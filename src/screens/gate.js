@@ -81,7 +81,10 @@ export async function gateScreen(game, charCfg, p) {
   async function solveBolt() {
     const k = solvedHere();                              // 이 문에서 몇 번째 빗장인가(0부터)
     hideActors(true);
-    await board.run(pl.bolts[k]);                        // 자모 조합 → (실마리) → 점검 퀴즈 → 낙관 → 판 걷힘
+    // 자모 조합 → (실마리) → 점검 퀴즈 → 낙관 → 판 걷힘 — 판이 걷히고 어둠이 걷힐 때 캐릭터·조작키가 함께 나타난다 (⑤ 5)
+    await board.run(pl.bolts[k], {
+      onLift: () => { screen.classList.remove('noticing'); controls.el.classList.remove('off'); },   // 보이기만 — 누르는 것은 빗장이 빠진 뒤
+    });
     game.solved = first + k + 1;
     game.place = p;
     save(game);                                          // 빗장을 풀 때마다 저장
@@ -90,7 +93,7 @@ export async function gateScreen(game, charCfg, p) {
       await wait(reduced() ? 0 : T.boltSlide);
       bolts[k].remove();
     }
-    hideActors(false);
+    hideActors(false);                                   // 빗장이 다 빠진 뒤에 조작키가 먹는다
   }
 
   // 덜컹 — 셋 남으면 꿈쩍 않고, 하나 남으면 거의 열릴 듯 벌어졌다 닫힌다 (⑤ 4번)

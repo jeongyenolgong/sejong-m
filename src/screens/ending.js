@@ -8,7 +8,8 @@
 //   잠든 모습에서는 그대로 머문다(눌러도 아무 일 없음 · 글 없음) · 다시 켜면 처음부터(저장에 「끝냄」)
 import { el, wait } from '../lib/dom.js';
 import { t, HARD } from '../lib/text.js';
-import { config } from '../lib/assets.js';
+import { config, imageUrl } from '../lib/assets.js';
+import { savePdf } from '../lib/pdf.js';
 import { scene } from '../lib/scene.js';
 import { mount, cover } from '../lib/stage.js';
 import { save } from '../lib/save.js';
@@ -40,28 +41,6 @@ function pledgePage(date, checked, onChange) {
       el('span.pdate', { text: date }),
     ]),
   ]);
-}
-
-// 판 그대로 PDF — 판마다 한 쪽. 글꼴이 깨지지 않도록 판을 그림으로 떠서 담는다(서버 없이 브라우저 안에서)
-async function savePdf(pages, date) {
-  const [{ jsPDF }, html2canvas] = await Promise.all([import('jspdf'), import('html2canvas').then((m) => m.default)]);
-  const stage = el('div.pdf-stage');
-  document.body.append(stage);
-  const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-  const W = 297, H = 210, margin = 24;
-  for (let i = 0; i < pages.length; i++) {
-    const node = pages[i](date);
-    const board = el(`div.gboard.paper.${node.classList.contains('pledge') ? 'tall' : 'short'}.pdf`, {}, [node]);
-    stage.replaceChildren(board);
-    const canvas = await html2canvas(board, { scale: 2, backgroundColor: null, logging: false });
-    if (i > 0) pdf.addPage();
-    const ratio = canvas.width / canvas.height;
-    let w = W - margin * 2, h = w / ratio;
-    if (h > H - margin * 2) { h = H - margin * 2; w = h * ratio; }
-    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', (W - w) / 2, (H - h) / 2, w, h);
-  }
-  stage.remove();
-  pdf.save(`${t('F-01')}.pdf`);
 }
 
 export async function ending(game, { screen, dim, layer }) {
@@ -126,7 +105,10 @@ export async function ending(game, { screen, dim, layer }) {
   saveB.addEventListener('click', async () => {
     if (saveB.disabled) return;
     saveB.disabled = true;
-    try { await savePdf([...PAGES.map((f) => () => f()), (d) => pledgePage(d, true, () => {})], date || today()); }
+    try {
+      const paper = await config('el_hanji_main');
+      await savePdf(jamoData, date || today(), imageUrl(paper.file));
+    }
     finally { saveB.disabled = false; }
   });
 
