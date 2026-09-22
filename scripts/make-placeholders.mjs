@@ -1,6 +1,6 @@
 // 그림 목록(content/image_list.xlsx 「그림」 시트)을 읽어 public/images/에
 //   ① 자리 표시 그림(<파일 이름>.svg) — 진짜 그림이 오기 전까지 쓰는 빈 틀
-//   ② 그림마다 설정 파일(<파일 이름>.json) — 그림 안 위치에 달린 값(걷는 범위·문 자리·빗장 높이 …)
+//   ② 그림마다 설정 파일(<파일 이름>.json) — 그림 안 위치에 달린 값(걷는 범위·문 자리 …)
 // 을 만든다.
 //
 // ⭐ 진짜 그림이 오면: 같은 이름으로 public/images/에 넣고(예: bg_start.png),
@@ -39,7 +39,7 @@ ws.eachRow((row, n) => {
 
 // 크기 — 가로 배경은 3:2로 뽑아 16:10으로 자른 1536×960 · 세로 캐릭터는 2:3
 const SIZE = {
-  wide: [1536, 960], tall: [1024, 1536], bolt: [1200, 120], board: [1480, 770],
+  wide: [1536, 960], tall: [1024, 1536], board: [1480, 770],
   door: [400, 700], cloud: [420, 150], bird: [160, 70],
 };
 
@@ -71,14 +71,13 @@ function writeConfig(name, cfg) {
 
 // 문이 있는 정면 넷 — 지도 순서와 파일 이름의 문 이름
 const DOOR_GATES = ['gwanghwamun', 'heungnyemun', 'geunjeongmun', 'sajeongmun'];
-const BOLTS = { gwanghwamun: 1, heungnyemun: 2, geunjeongmun: 3, sajeongmun: 3 };
 
 let made = 0, kept = 0;
 for (const r of list) {
   const name = r['파일 이름'];
   if (!name || name.includes('<') || name.includes('_n')) continue;   // 파생(CUT)은 아래에서 따로
   const tall = r['뽑는 비율'].startsWith('세로');
-  const [w, h] = name === 'el_bolt' ? SIZE.bolt : name.startsWith('el_hanji') ? SIZE.board : tall ? SIZE.tall : SIZE.wide;
+  const [w, h] = name.startsWith('el_hanji') ? SIZE.board : tall ? SIZE.tall : SIZE.wide;
   const lines = [`${r['번호']} · ${r['무엇']}`, `${name} · ${r['뽑는 비율']}`, '자리 표시 그림 — 진짜 그림이 오면 같은 이름으로 바꿔 넣는다'];
   let extra = '';
   let cfg = { file: `${name}.svg`, width: w, height: h };
@@ -105,8 +104,7 @@ for (const r of list) {
       extra += `<path d="M${w * 0.3} ${h} L${w * 0.42} 0 L${w * 0.58} 0 L${w * 0.7} ${h} Z" fill="#2E2620" fill-opacity=".08"/>` +
         label(w / 2, h * 0.7, '— 투명한 벽 1 —', 22) + label(w / 2, h * 0.45, '— 투명한 벽 2 —', 22);
     } else {
-      const k = BOLTS[gate];
-      // 문짝 두 짝의 자리(오려 낸 그림이 앉는 곳) · 경첩은 바깥쪽 세로 변 · 빗장이 걸리는 높이(위에서부터)
+      // 문짝 두 짝의 자리(오려 낸 그림이 앉는 곳) · 경첩은 바깥쪽 세로 변
       cfg = {
         ...cfg,
         pushY: 90,                               // ▲로 밀 때 캐릭터가 멈추는 선
@@ -115,7 +113,6 @@ for (const r of list) {
           left: { file: `cut_door_${gate}_l.svg`, x: 36, y: 34, w: 14, h: 56 },
           right: { file: `cut_door_${gate}_r.svg`, x: 50, y: 34, w: 14, h: 56 },
         },
-        bolts: [[46], [44, 56], [42, 52, 62]][k - 1].map((y) => ({ x: 33, y, w: 34, h: 4.5 })),
       };
       extra += rect(w * 0.36, h * 0.34, w * 0.28, h * 0.56, 0.1) + rect(w * 0.2, h * 0.12, w * 0.6, h * 0.2, 0.1) + label(w / 2, h * 0.24, '문루 · 현판');
     }

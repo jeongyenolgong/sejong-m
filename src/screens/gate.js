@@ -1,12 +1,13 @@
-// ⑤ 문 앞 화면 — 정면 그림 · 문짝 · 빗장 · 알림창 · 문제판 · 캐릭터 · 조작키 ◀ ▲ ▶ (요소정의 3 · ⑤ · ⑤-A · 5-3)
+// ⑤ 문 앞 화면 — 정면 그림 · 문짝 · 알림창 · 문제판 · 캐릭터 · 조작키 ◀ ▲ ▶ (요소정의 3 · ⑤ · ⑤-A · 5-3)
 //
-//  도착 → 문과 걸린 빗장이 먼저 보인다 → 알림창(처음 올 때 한 번 · 「닫기」를 눌러야 조작키가 산다)
+//  도착 → 문이 먼저 보인다 → 알림창(처음 올 때 한 번 · 「닫기」를 눌러야 조작키가 산다)
 //  → ▲로 문을 민다 → 빗장이 남았으면 덜컹(세기 = 남은 빗장 수) → 판이 뜬다(뒤가 어두워지고 캐릭터·조작키가 숨는다)
-//  → 자모 조합 → 점검 퀴즈 → 「통과」 낙관 → 판이 걷힌다 → 빗장이 위에서부터 하나 옆으로 빠진다
-//  → 다시 ▲ … → 빗장이 다 빠지면 ▲로 문이 열리고 빛이 차오르고 캐릭터가 그 속으로 걸어 들어간다 → 지도
+//  → 자모 조합 → 점검 퀴즈 → 「통과」 낙관 → 판이 걷힌다(바로 조작키가 먹는다)
+//  → 다시 ▲ … → 빗장을 다 풀면 ▲로 문이 열리고 빛이 차오르고 캐릭터가 그 속으로 걸어 들어간다 → 지도
+//  「빗장」은 그림이 없는 잠금 단위다 — 문제 하나 = 빗장 하나(요소정의 요소 4 · 2026-09-23 그림을 뺐다).
 //
 // 영제교는 문짝이 없다 — 다리를 건너다 중간에 두 번 투명한 벽에 막히고 그때 판이 뜬다. 다리 끝에 닿으면 지도로.
-// 그림 안 위치(문짝 · 경첩 · 빗장 높이 · 서는 자리 · 미는 선 · 벽)는 public/images/bg_front_*.json에 있다.
+// 그림 안 위치(문짝 · 경첩 · 서는 자리 · 미는 선 · 벽)는 public/images/bg_front_*.json에 있다.
 import { el, wait, animate, ease } from '../lib/dom.js';
 import { t } from '../lib/text.js';
 import { config, imageUrl, preloadAll } from '../lib/assets.js';
@@ -22,8 +23,8 @@ import { PLACES, boltsBefore } from './journey.js';
 
 export async function gateScreen(game, charCfg, p) {
   const pl = PLACES[p];
-  const [cfg, boltCfg] = await Promise.all([config(pl.front), config('el_bolt')]);
-  await preloadAll([pl.front, 'el_bolt', 'el_hanji_main', 'el_hanji_side']);
+  const cfg = await config(pl.front);
+  await preloadAll([pl.front, 'el_hanji_main', 'el_hanji_side']);
   const first = boltsBefore(p);                          // 이 문의 첫 빗장이 전체에서 몇 번째인가
   const total = pl.bolts.length;
   const solvedHere = () => Math.max(0, Math.min(total, game.solved - first));
@@ -43,10 +44,6 @@ export async function gateScreen(game, charCfg, p) {
     }
     sc.append(doorWrap);
   }
-  // 빗장 — 위에서부터. 이미 푼 것은 걸려 있지 않다
-  const bolts = (cfg.bolts || []).map((b) => place(el('img.thing.bolt', { src: imageUrl(boltCfg.file), alt: '' }), b));
-  bolts.forEach((b, i) => { if (i >= solvedHere()) sc.append(b); });
-
   const light = el('div.thing.gate-light');              // 틈 너머의 빛 — 새 그림 없이 코드로
   if (cfg.doors) {
     const l = cfg.doors.left, r = cfg.doors.right;
@@ -69,7 +66,7 @@ export async function gateScreen(game, charCfg, p) {
 
   const hideActors = (on) => { screen.classList.toggle('noticing', on); controls.setEnabled(!on); };
 
-  // 알림창 — 도착할 때 한 번. 빗장이 빠진 뒤에는 다시 뜨지 않는다
+  // 알림창 — 도착할 때 한 번. 빗장을 하나라도 푼 뒤에는 다시 뜨지 않는다
   if (solvedHere() === 0) {
     hideActors(true);
     const [name, ...bodies] = pl.notice.map(t);
@@ -77,23 +74,18 @@ export async function gateScreen(game, charCfg, p) {
   }
   hideActors(false);
 
-  // 빗장 하나 — 판을 띄워 풀고, 판이 걷힌 뒤 빗장을 뺀다
+  // 빗장 하나 — 판을 띄워 푼다
   async function solveBolt() {
     const k = solvedHere();                              // 이 문에서 몇 번째 빗장인가(0부터)
     hideActors(true);
     // 자모 조합 → (실마리) → 점검 퀴즈 → 낙관 → 판 걷힘 — 판이 걷히고 어둠이 걷힐 때 캐릭터·조작키가 함께 나타난다 (⑤ 5)
     await board.run(pl.bolts[k], {
-      onLift: () => { screen.classList.remove('noticing'); controls.el.classList.remove('off'); },   // 보이기만 — 누르는 것은 빗장이 빠진 뒤
+      onLift: () => { screen.classList.remove('noticing'); controls.el.classList.remove('off'); },   // 보이기만 — 누르는 것은 판이 다 걷힌 뒤
     });
     game.solved = first + k + 1;
     game.place = p;
     save(game);                                          // 빗장을 풀 때마다 저장
-    if (bolts[k] && bolts[k].isConnected) {              // 위에서부터 하나, 옆으로 미끄러져 빠진다
-      bolts[k].classList.add('off');
-      await wait(reduced() ? 0 : T.boltSlide);
-      bolts[k].remove();
-    }
-    hideActors(false);                                   // 빗장이 다 빠진 뒤에 조작키가 먹는다
+    hideActors(false);                                   // 판이 다 걷히면 바로 조작키가 먹는다
   }
 
   // 덜컹 — 셋 남으면 꿈쩍 않고, 하나 남으면 거의 열릴 듯 벌어졌다 닫힌다 (⑤ 4번)
