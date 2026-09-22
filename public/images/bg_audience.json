@@ -1,0 +1,15 @@
+{
+  "file": "bg_audience.svg",
+  "width": 1536,
+  "height": 960,
+  "charHeight": 34,
+  "stand": {
+    "x": 50,
+    "y": 98
+  },
+  "stopY": 78,
+  "walk": {
+    "minX": 40,
+    "maxX": 60
+  }
+}

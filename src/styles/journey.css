@@ -1,0 +1,86 @@
+/* ── ④ 지도 · ⑤ 문 앞 · ⑥ 알현 — 캐릭터 · 조작키 · 미니맵 · 알림창 ── */
+.spot { position: absolute; inset: 0; }
+.scene.overlay { pointer-events: none; z-index: 5; }
+.layer { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
+.layer > * { pointer-events: auto; }
+
+/* 캐릭터 — 발 자리(left/top)를 기준으로 선다 */
+.walker {
+  position: absolute; width: auto; transform: translate(-50%, -100%);
+  transform-origin: 50% 100%; pointer-events: none; z-index: 6;
+  transition: opacity var(--fade, 400ms) ease;
+}
+/* 🧪 걸음 그림이 없는 동안은 한 장이 가볍게 들썩이며 미끄러진다 */
+.walker.walking { animation: bob .42s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -1.2%; } }
+.walker.bump { animation: bump-back .24s ease; }
+@keyframes bump-back { 50% { translate: 0 3%; } }
+.noticing .walker, .walker.off { opacity: 0; }
+
+/* 조작키 ◀ ▲ ▶ — 화면 아래 가운데 */
+.keys {
+  position: absolute; left: 50%; bottom: calc(4.2 * var(--u)); transform: translateX(-50%); z-index: 20;
+  display: flex; gap: calc(1.5 * var(--u)); transition: opacity .4s ease;
+}
+.keys.off { opacity: 0; pointer-events: none; }
+.key {
+  font-size: calc(2.5 * var(--u)); line-height: 1; color: var(--meok);
+  background: rgba(243, 236, 219, .75); border: 1px solid var(--meok);
+  padding: calc(1.2 * var(--u)) calc(2.6 * var(--u)); cursor: pointer;
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+.key.on { background: var(--meok); color: var(--hanji-hi); }
+
+/* 미니맵 — 오른쪽 위에 떠 있는 상자 · 가로 8.5 (「육조거리」가 줄바꿈 없이 드는 폭) */
+.minimap {
+  position: absolute; top: calc(2.4 * var(--u)); right: calc(2.4 * var(--u)); width: calc(8.5 * var(--u)); z-index: 20;
+  background: rgba(243, 236, 219, .9); border: 1px solid rgba(31, 28, 23, .34);
+  box-shadow: 0 calc(.8 * var(--u)) calc(2 * var(--u)) rgba(31, 28, 23, .18);
+  display: flex; flex-direction: column; padding: calc(1.1 * var(--u)) calc(.8 * var(--u));
+  pointer-events: none;
+}
+.mrow { height: calc(2.5 * var(--u)); display: flex; align-items: center; gap: calc(.7 * var(--u)); padding-left: calc(1.1 * var(--u)); position: relative; }
+.mname { white-space: nowrap; font-size: calc(1.55 * var(--u)); letter-spacing: .01em; position: relative; }
+.mdot { flex: none; width: calc(1.05 * var(--u)); height: calc(1.05 * var(--u)); border-radius: 50%; border: 1px solid var(--meok); position: relative; }
+.mrow.past .mname { color: var(--meok-soft); }
+.mrow.past .mdot { background: var(--meok); }
+.mrow.future .mname { color: rgba(31, 28, 23, .34); }
+.mrow.future .mdot { border-color: rgba(31, 28, 23, .34); }
+.mrow.now::before { content: ""; position: absolute; inset: calc(.1 * var(--u)) calc(.3 * var(--u)); background: rgba(233, 224, 204, .95); border: 1px solid rgba(31, 28, 23, .18); }
+.mrow.now .mdot { background: var(--seal); border-color: var(--seal); transform: scale(1.18); }
+.mrow.now { animation: breathe 2.8s ease-in-out infinite; }
+@keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: .72; } }
+.noticing .minimap { opacity: 1; }
+
+/* 한지 바탕 — 알림창 · 판 · 갈무리 · 서약서는 본선 한지 그림을 판 크기로 깐다 */
+.paper { background-color: var(--hanji-hi); background-size: 100% 100%; border: 1px solid rgba(31, 28, 23, .42); box-shadow: 0 calc(1 * var(--u)) calc(2.4 * var(--u)) rgba(31, 28, 23, .22); }
+
+/* 알림창 — 가로 64 × 세로 33 · 문 한가운데 */
+.notice {
+  position: absolute; left: 50%; top: 50%; width: calc(64 * var(--u)); height: calc(33 * var(--u));
+  transform: translate(-50%, -50%) scale(.96); opacity: 0;
+  padding: calc(3.2 * var(--u)) calc(3.6 * var(--u)) calc(2.8 * var(--u));
+  display: flex; flex-direction: column; align-items: center;
+  transition: opacity .4s ease, transform .4s cubic-bezier(.3, 0, .2, 1);
+  background-image: var(--paper-main);
+}
+.notice.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.notice-name { margin: 0 0 calc(2 * var(--u)); font-size: var(--f2); line-height: 1.3; letter-spacing: .08em; text-align: center; }
+.notice-body { margin: 0; width: 100%; font-size: var(--f4); line-height: 1.9; text-align: left; }
+.notice-body + .notice-body { margin-top: calc(1.4 * var(--u)); }
+.notice-foot { margin-top: auto; padding-top: calc(2.4 * var(--u)); }
+.notice-close { letter-spacing: .16em; text-indent: .16em; padding: calc(.8 * var(--u)) calc(3 * var(--u)); }
+
+/* 문 앞 — 문짝은 경첩(바깥쪽 세로 변)을 축으로 돈다 */
+.gate .doors { position: absolute; inset: 0; perspective: 1400px; pointer-events: none; }
+.door { position: absolute; }
+.door.left { transform-origin: 0% 50%; }
+.door.right { transform-origin: 100% 50%; }
+.bolt { position: absolute; z-index: 4; transition: transform var(--bolt-ms, 550ms) cubic-bezier(.3, 0, .3, 1), opacity .22s ease-in .33s; }
+.bolt.off { transform: translateX(70%); opacity: 0; }
+.gate-light {
+  position: absolute; opacity: 0; transition: opacity .6s ease;
+  background: radial-gradient(60% 70% at 50% 55%, #fffaf0 0%, #fbf1d6 60%, rgba(251, 241, 214, .6) 100%);
+}
+.gate-light.on { opacity: 1; }
+.noticing .keys { opacity: 0; pointer-events: none; }

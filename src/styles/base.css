@@ -1,0 +1,120 @@
+/* ── 글꼴 — 저장소에 실어 보낸다(학교 망에서 바깥 글꼴이 막혀도 뜬다) · SIL OFL ── */
+@font-face {
+  font-family: 'Gowun Batang';
+  src: url('../fonts/GowunBatang-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Gowun Batang';
+  src: url('../fonts/GowunBatang-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: block;
+}
+
+/* ── 단위 ──
+   --u : 화면 크기를 따르는 한 칸. 기획 문서의 치수(「화면 가로를 100으로 놓은 값」)에 이 칸을 곱한다.
+         가로로 들면 16:10 상자가 화면에 드는 크기의 1% · 세로로 들면 판이 화면 폭에 차도록 키운다.
+         (판 74칸이 세로 화면 폭의 96%쯤 — 📝 세로 배치는 기기에서 보여 드리고 정한다) */
+:root {
+  --u: min(1vw, 1.6dvh);
+  /* 글자 크기 다섯 단계 — 새 글이 생기면 새 크기를 만들지 않고 이 가운데 하나를 고른다 (요소정의 5-2-2) */
+  --f1: calc(4.7 * var(--u));   /* ① 다 만든 글자 */
+  --f2: calc(2.4 * var(--u));   /* ② 손으로 옮기거나 넣는다 */
+  --f3: calc(1.85 * var(--u));  /* ③ 읽는다 */
+  --f4: calc(1.6 * var(--u));   /* ④ 누르거나 따른다 */
+  --f5: calc(1.4 * var(--u));   /* ⑤ 곁에 딸린다 */
+
+  /* 빛깔 — 📝 디자인 단계에서 정한다. 지금은 자리만 잡아 둔 값 */
+  --meok: #2E2620;              /* 먹빛 — 요소정의 8 */
+  --meok-soft: #6A6355;
+  --hanji: #E9E0CC;
+  --hanji-hi: #F3ECDB;
+  --seal: #9E3B2F;              /* 낙관 붉은빛 */
+  --dim: rgba(31, 28, 23, .42); /* 판 뒤를 어둡게 — 먹 42% (📝 디자인 단계) */
+  --bg: #E9E0CC;                /* 불러오는 동안 깔리는 시작 화면 바탕색 */
+}
+@media (orientation: portrait) {
+  :root { --u: min(1.29vw, 1dvh); }
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; height: 100%; overflow: hidden;
+  background: var(--bg);
+  color: var(--meok);
+  font-family: 'Gowun Batang', serif;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+/* 게임 글은 어절 단위로만 줄이 바뀐다 — 낱말이 줄 중간에서 쪼개지지 않는다 (요소정의 5-2-2) */
+body { word-break: keep-all; overflow-wrap: normal; }
+button { font-family: inherit; color: inherit; }
+img { -webkit-user-drag: none; user-select: none; -webkit-user-select: none; }
+[hidden] { display: none !important; }
+
+#game {
+  position: fixed; inset: 0; overflow: hidden;
+  -webkit-user-select: none; user-select: none;
+  touch-action: manipulation;
+}
+.screen { position: absolute; inset: 0; overflow: hidden; }
+
+/* 장면 — 16:10 그림이 화면을 덮는다 */
+.scene {
+  position: absolute; left: 50%; top: 50%;
+  width: max(100vw, 160dvh); aspect-ratio: 16 / 10;
+  transform: translate(-50%, -50%);
+}
+.scene-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.scene > .thing { position: absolute; }
+
+/* 진행 버튼 — 모든 화면이 같은 자리 · 화면 아래 가운데 (📝 생김새는 디자인 단계) */
+.cta-row {
+  position: absolute; left: 50%; bottom: calc(7 * var(--u)); transform: translateX(-50%);
+  display: flex; gap: calc(2.4 * var(--u)); z-index: 20;
+}
+.cta {
+  font-size: calc(2.7 * var(--u)); letter-spacing: .34em; text-indent: .34em;
+  color: var(--meok); background: rgba(243, 236, 219, .7); border: 1px solid var(--meok); border-radius: 0;
+  padding: calc(1.5 * var(--u)) calc(5.4 * var(--u)); cursor: pointer;
+  transition: background .15s, color .15s, opacity .15s;
+}
+.cta:disabled { opacity: .28; cursor: default; }
+@media (hover: hover) { .cta:enabled:hover { background: var(--meok); color: var(--hanji-hi); } }
+.cta:focus-visible, .btn:focus-visible { outline: 2px solid var(--seal); outline-offset: 3px; }
+
+/* 판 안의 작은 버튼(실마리 · 돌아가기 · 확인 · 닫기) */
+.btn {
+  font-size: var(--f4); letter-spacing: .14em; text-indent: .14em;
+  color: var(--meok); background: transparent; border: 1px solid var(--meok);
+  padding: calc(.8 * var(--u)) calc(2.4 * var(--u)); cursor: pointer;
+}
+.btn:disabled { opacity: .35; cursor: default; }
+@media (hover: hover) { .btn:enabled:hover { background: var(--meok); color: var(--hanji-hi); } }
+
+/* 뒤를 어둡게 — 판·알림창이 떠 있는 동안 */
+.dim {
+  position: absolute; inset: 0; z-index: 30; background: var(--dim);
+  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  opacity: 0; pointer-events: none;
+}
+.dim.on { opacity: 1; pointer-events: auto; }
+
+/* 넘어갈 때 덮는 막 (어두움 · 빛) */
+.veil { position: absolute; inset: 0; z-index: 90; pointer-events: none; opacity: 0; background: #16130f; }
+.veil.light { background: radial-gradient(60% 70% at 50% 45%, #fffaf0 0%, #fbf3df 55%, #f3e8cc 100%); }
+
+/* 한 칸 안에서 떨림 */
+@keyframes shake-x {
+  0%, 100% { translate: 0 0; }
+  20% { translate: calc(-.7 * var(--u)) 0; }
+  45% { translate: calc(.7 * var(--u)) 0; }
+  70% { translate: calc(-.4 * var(--u)) 0; }
+}
+.shake { animation: shake-x var(--shake-ms, 340ms) ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+}

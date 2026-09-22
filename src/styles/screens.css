@@ -1,0 +1,74 @@
+/* ── ① 시작 ── 📝 제목·부제 크기는 디자인 단계 */
+.start .title-stack {
+  position: absolute; left: 0; right: 0; top: 0; bottom: calc(13 * var(--u));
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  pointer-events: none; z-index: 5;
+}
+.start .title {
+  margin: 0; font-weight: 700; font-size: calc(7.6 * var(--u)); line-height: 1.15; text-align: center;
+  text-wrap: balance;
+}
+.start .subtitle {
+  margin: calc(2.6 * var(--u)) 0 0; font-size: calc(2.5 * var(--u)); letter-spacing: .06em;
+  color: var(--meok-soft);
+}
+.start .cloud, .start .bird { pointer-events: none; }
+
+/* ── ② 캐릭터 선택 ── */
+.select .select-stack {
+  position: absolute; left: 0; right: 0; top: 0; bottom: calc(13 * var(--u));
+  display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5;
+}
+.select .lead { margin: 0 0 calc(3.2 * var(--u)); font-size: calc(3.1 * var(--u)); letter-spacing: .06em; }
+.select .pair { display: flex; gap: calc(7 * var(--u)); align-items: flex-start; }
+.pick {
+  display: flex; flex-direction: column; align-items: center; gap: calc(1.2 * var(--u));
+  background: none; border: 0; padding: 0; cursor: pointer;
+}
+.pick:focus-visible { outline: 2px solid var(--seal); outline-offset: 6px; }
+/* 고른 쪽 그림만 진해진다 — 이름·설명·테두리는 건드리지 않는다 (0-1절) */
+.pick .figure {
+  height: calc(28 * var(--u)); width: auto; opacity: .5;
+  transition: opacity .2s ease, filter .2s ease;
+}
+.pick[aria-pressed="true"] .figure { opacity: 1; filter: drop-shadow(0 calc(.9 * var(--u)) calc(1.1 * var(--u)) rgba(31, 28, 23, .28)); }
+.pick .name { font-size: calc(2.2 * var(--u)); letter-spacing: .08em; }
+.pick .desc { width: calc(19 * var(--u)); font-size: var(--f5); line-height: 1.7; color: var(--meok-soft); text-align: center; }
+
+/* ── ③ 프롤로그 · 알현 자막 ── */
+.tapzone { position: absolute; inset: 0; z-index: 10; background: transparent; border: 0; padding: 0; cursor: pointer; }
+.side {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 12;
+  background: transparent; border: 0; padding: calc(1.6 * var(--u)) calc(1.2 * var(--u)); cursor: pointer;
+  font-size: calc(5 * var(--u)); line-height: 1; color: var(--meok); opacity: .45;
+}
+.side.l { left: calc(1.6 * var(--u)); }
+.side.r { right: calc(1.6 * var(--u)); }
+.side:disabled { opacity: 0; cursor: default; }
+.side:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+.dark .side, .on-dark .side { color: var(--hanji-hi); opacity: .6; }
+/* 자막 — 화면 아래 가운데(버튼이 없어 그 자리를 쓴다) */
+.caption {
+  position: absolute; left: 50%; bottom: calc(7 * var(--u)); transform: translateX(-50%); z-index: 11;
+  width: calc(76 * var(--u)); margin: 0; text-align: center;
+  font-size: calc(2.7 * var(--u)); line-height: 1.5; color: var(--meok); text-wrap: balance;
+  pointer-events: none;
+  text-shadow: 0 0 calc(1.2 * var(--u)) rgba(243, 236, 219, .9);
+}
+.dark .caption { color: var(--hanji-hi); text-shadow: 0 0 calc(1.2 * var(--u)) rgba(0, 0, 0, .7); }
+
+/* 컷 3 — 떠올라 흩어지는 글자 */
+.shatter-line { transition: bottom var(--rise-ms, 900ms) cubic-bezier(.3, 0, .2, 1); white-space: nowrap; width: auto; }
+.shatter-line.risen { bottom: 52%; }
+.shatter-line .syl { display: inline-block; transition: opacity .5s ease; }
+.shatter-line .syl.gone { opacity: 0; }
+.ink-piece {
+  position: absolute; z-index: 11; pointer-events: none;
+  font-size: calc(3.2 * var(--u)); color: var(--meok);
+  /* 가장자리 번짐 두 겹 */
+  text-shadow: 0 0 calc(.25 * var(--u)) rgba(46, 38, 32, .55), 0 0 calc(.8 * var(--u)) rgba(46, 38, 32, .25);
+  opacity: 0; transform: translate(0, 0) rotate(0);
+  transition: transform var(--ms, 3400ms) cubic-bezier(.22, .61, .36, 1), opacity var(--ms, 3400ms) ease;
+}
+.ink-piece.go { opacity: .92; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); animation: ink-wobble 2.6s ease-in-out infinite alternate; }
+@keyframes ink-wobble { from { translate: 0 0; } to { translate: 0 calc(.35 * var(--u)); } }

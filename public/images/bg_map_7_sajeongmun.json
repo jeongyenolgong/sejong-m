@@ -1,0 +1,19 @@
+{
+  "file": "bg_map_7_sajeongmun.svg",
+  "width": 1536,
+  "height": 960,
+  "walk": {
+    "minX": 22,
+    "maxX": 78
+  },
+  "start": {
+    "x": 50,
+    "y": 80
+  },
+  "charHeight": 22,
+  "gate": {
+    "x1": 43,
+    "x2": 57,
+    "y": 18
+  }
+}

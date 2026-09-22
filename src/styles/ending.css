@@ -1,0 +1,58 @@
+/* ── ⑦ 갈무리 판 · ⑧ 서약서 판 ── 판 모양은 문제판 그대로 · 크기만 다르다 (요소정의 14-1) */
+.archive { position: absolute; inset: 0; opacity: 0; transition: opacity .4s ease; }
+.archive.shown { opacity: 1; }
+.archive.lifting { opacity: 0; transition: opacity .9s ease; }
+.archive.lifting .gboard { translate: 0 calc(-2.4 * var(--u)); transition: translate .9s cubic-bezier(.4, 0, .2, 1); }
+/* 판 높이 — 갈무리 20.0 · 서약서 35.9 · 버튼 자리(화면 아래 7 + 버튼) 위로 남은 높이의 가운데 */
+.gboard {
+  position: absolute; left: calc(50% - 32 * var(--u)); width: calc(64 * var(--u)); overflow: hidden;
+  --h: 20;
+  height: calc(var(--h) * var(--u));
+  top: max(calc(2.4 * var(--u)), calc((100dvh - 15.5 * var(--u) - var(--h) * var(--u)) / 2));
+  transition: height .5s cubic-bezier(.3, 0, .2, 1), top .5s cubic-bezier(.3, 0, .2, 1);
+}
+.gboard.tall { --h: 35.9; }
+.archive .side { top: calc(max(calc(2.4 * var(--u)), calc((100dvh - 15.5 * var(--u) - 20 * var(--u)) / 2)) + 10 * var(--u)); transform: translateY(-50%); }
+.archive .g-prev { left: calc(50% - 39.4 * var(--u)); }
+.archive .g-next { left: calc(50% + 33.4 * var(--u)); right: auto; }
+.gpage { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.gpage.sent { padding: calc(6.6 * var(--u)) calc(3 * var(--u)) calc(2.4 * var(--u)); }
+.gpage.pledge { padding: calc(2.8 * var(--u)) calc(5 * var(--u)) calc(2.6 * var(--u)); }
+.ghead { position: absolute; left: 0; right: 0; top: calc(1.35 * var(--u)); margin: 0; text-align: center; font-size: var(--f4); font-weight: 700; line-height: 1.5; letter-spacing: .3em; text-indent: .3em; }
+.gsentence { margin: 0; font-size: var(--f3); line-height: 1.95; text-align: center; }
+.gsentence .blank .word { opacity: 1; transition: none; }
+.ptitle { margin: 0 0 calc(1.8 * var(--u)); font-weight: 700; font-size: var(--f2); line-height: 1.3; letter-spacing: .6em; text-indent: .6em; }
+.plead { margin: 0 0 calc(1.8 * var(--u)); font-size: var(--f3); line-height: 1.8; text-align: center; }
+.pitems { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: calc(.5 * var(--u)); font-size: var(--f4); line-height: 1.8; }
+.pfoot { margin-top: calc(2 * var(--u)); display: flex; flex-direction: column; align-items: center; gap: calc(1 * var(--u)); }
+.pcheck { display: flex; align-items: center; gap: calc(1 * var(--u)); cursor: pointer; font-size: var(--f4); }
+/* 체크 칸 B-11 — 하드코딩 표시 · 📝 모양은 디자인 단계 */
+.pcheck-box {
+  appearance: none; -webkit-appearance: none; margin: 0; flex: none; cursor: pointer;
+  width: calc(2.1 * var(--u)); height: calc(2.1 * var(--u)); border: 1px solid var(--meok); background: transparent;
+  display: grid; place-items: center;
+}
+.pcheck-box::after {
+  content: ""; width: calc(.6 * var(--u)); height: calc(1.15 * var(--u)); border: solid var(--seal);
+  border-width: 0 calc(.28 * var(--u)) calc(.28 * var(--u)) 0; transform: rotate(45deg) translate(-.1em, -.15em); opacity: 0;
+  transition: opacity .2s ease;
+}
+.pcheck-box:checked::after { opacity: 1; }
+.pdate { font-size: var(--f5); color: var(--meok-soft); letter-spacing: .06em; }
+/* 옆으로 밀림 0.5초 */
+.gpage.in-r { animation: inR .5s cubic-bezier(.3, 0, .2, 1); }
+.gpage.in-l { animation: inL .5s cubic-bezier(.3, 0, .2, 1); }
+.gpage.out-l { animation: outL .5s cubic-bezier(.3, 0, .2, 1) forwards; }
+.gpage.out-r { animation: outR .5s cubic-bezier(.3, 0, .2, 1) forwards; }
+@keyframes inR { from { transform: translateX(18%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes inL { from { transform: translateX(-18%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes outL { to { transform: translateX(-18%); opacity: 0; } }
+@keyframes outR { to { transform: translateX(18%); opacity: 0; } }
+/* [저장] [종료] — 서약서에 체크하면 나타난다 · 자리는 처음부터 비워 둔다 */
+.end-ctas { opacity: 0; pointer-events: none; transition: opacity .5s ease; }
+.end-ctas.on { opacity: 1; pointer-events: auto; }
+.end-ctas .cta { background: rgba(243, 236, 219, .95); }
+
+/* PDF로 뜰 때 — 화면 밖에서 판 하나를 정한 크기로 그린다 */
+.pdf-stage { position: fixed; left: -10000px; top: 0; --u: 16px; }
+.gboard.pdf { position: relative; left: 0; top: 0; transition: none; }

@@ -1,0 +1,55 @@
+{
+  "file": "bg_front_sajeongmun.svg",
+  "width": 1536,
+  "height": 960,
+  "charHeight": 30,
+  "stand": {
+    "x": 50,
+    "y": 96
+  },
+  "walk": {
+    "minX": 30,
+    "maxX": 70
+  },
+  "pushY": 90,
+  "doorRange": {
+    "x1": 38,
+    "x2": 62
+  },
+  "doors": {
+    "left": {
+      "file": "cut_door_sajeongmun_l.svg",
+      "x": 36,
+      "y": 34,
+      "w": 14,
+      "h": 56
+    },
+    "right": {
+      "file": "cut_door_sajeongmun_r.svg",
+      "x": 50,
+      "y": 34,
+      "w": 14,
+      "h": 56
+    }
+  },
+  "bolts": [
+    {
+      "x": 33,
+      "y": 42,
+      "w": 34,
+      "h": 4.5
+    },
+    {
+      "x": 33,
+      "y": 52,
+      "w": 34,
+      "h": 4.5
+    },
+    {
+      "x": 33,
+      "y": 62,
+      "w": 34,
+      "h": 4.5
+    }
+  ]
+}

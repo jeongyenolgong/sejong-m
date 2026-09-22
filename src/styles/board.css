@@ -1,0 +1,148 @@
+/* ── 문제판 — 가로 74 × 세로 38.5 (요소정의 5-2-1) · 문 한가운데 ──
+   판 안의 모양은 모두 클래스로 건다 — 넘어가는 한지 장은 판을 복사한 것이라 id가 없다 (5-2-2) */
+.board-frame {
+  position: absolute; left: calc(50% - 37 * var(--u)); top: calc(50% - 19.25 * var(--u) - 1.2 * var(--u));
+  width: calc(74 * var(--u)); height: calc(38.5 * var(--u));
+  opacity: 0; transition: opacity .4s ease, translate .26s cubic-bezier(.4, 0, .2, 1), top .9s cubic-bezier(.4, 0, .2, 1);
+  transform-origin: 0% 50%;
+}
+.board-frame.on { opacity: 1; }
+.board-frame.kb { translate: 0 calc(-1 * var(--lift, 0px)); }
+/* 판이 걷힌다 — 0.9초 동안 옅어지며 조금 위로 올라간다 (10-3-1) */
+.board-frame.lifting { opacity: 0; top: calc(50% - 19.25 * var(--u) - 3.6 * var(--u)); transition: opacity .9s ease, top .9s cubic-bezier(.4, 0, .2, 1); pointer-events: none; }
+.board, .underboard { position: absolute; inset: 0; }
+.board { overflow: visible; background-image: var(--paper-main); }
+.underboard { opacity: 0; translate: calc(-2.8 * var(--u)) calc(2.8 * var(--u)); background-image: var(--paper-main); }
+/* 곁길 — 아래에 본선 판의 가장자리가 한 줄 남는다(어긋난 폭 2.8) */
+.aside .underboard { opacity: 1; }
+.board.shake { animation: shake-x 340ms ease; }
+
+.panel {
+  position: absolute; inset: 0; padding: calc(2.4 * var(--u)) calc(3 * var(--u));
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+/* 머리 안내 Q-01 · Q-03 · Q-04 — 같은 자리 · ④ 1.6 굵게 · 오른쪽 위 버튼과 같은 높이 */
+.panel .head {
+  position: absolute; left: 0; right: 0; top: calc(1.35 * var(--u)); margin: 0; text-align: center;
+  font-size: var(--f4); font-weight: 700; line-height: 1.5; letter-spacing: .03em;
+}
+/* 판 오른쪽 위 — 실마리 · 돌아가기 */
+.panel .corner { position: absolute; top: calc(.9 * var(--u)); right: calc(.9 * var(--u)); z-index: 2; padding: calc(.6 * var(--u)) calc(1.4 * var(--u)); letter-spacing: .06em; text-indent: .06em; }
+
+/* ① 자모 조합 */
+.panel-jamo { padding-top: calc(2.4 * var(--u) + 4.2 * var(--u)); gap: calc(.6 * var(--u)); justify-content: center; }
+.panel-jamo .sentence { margin: 0; font-size: var(--f3); line-height: 1.95; text-align: center; }
+/* 빈칸 — 들어갈 낱말을 안 보이게 넣어 두어 칸이 그 길이가 된다 · 두 줄로 쪼개지지 않는다 */
+.blank { display: inline-block; white-space: nowrap; border-bottom: 1px solid rgba(31, 28, 23, .5); }
+.blank .word { opacity: 0; padding: 0 calc(.3 * var(--u)); transition: opacity 1.6s ease-in-out; }
+.blank.filled .word { opacity: 1; }
+.work {
+  position: relative; width: 100%; height: calc(19.8 * var(--u)); overflow: hidden; flex: none;
+  border: 1px solid rgba(31, 28, 23, .28); background: rgba(233, 224, 204, .35);
+  transition: height .9s cubic-bezier(.4, 0, .2, 1), opacity .9s ease, margin-top .9s cubic-bezier(.4, 0, .2, 1), border-color .9s ease;
+}
+/* 맞힌 뒤 ② — 조합 영역이 걷히고 문장이 가운데로 (0.9초) · 실마리 버튼도 함께 사라진다 */
+.cleared .work { height: 0; opacity: 0; margin-top: calc(-.6 * var(--u)); border-color: transparent; }
+.cleared .corner { opacity: 0; pointer-events: none; transition: opacity .9s ease; }
+.slots { position: absolute; left: 50%; top: calc(2.1 * var(--u)); transform: translateX(-50%); display: flex; gap: calc(1.2 * var(--u)); }
+.syl-box {
+  position: relative; width: calc(6.6 * var(--u)); height: calc(6.6 * var(--u)); cursor: pointer;
+  border: 1px dashed rgba(31, 28, 23, .42); display: grid; place-items: center; line-height: 1;
+}
+.syl-box.some { border-style: solid; border-color: rgba(31, 28, 23, .6); }
+.syl-box[data-t="v"] { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+.syl-box[data-t="v3"] { grid-template-columns: 1fr 1fr; grid-template-rows: 1.3fr 1fr; }
+.syl-box[data-t="h"] { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+.syl-box[data-t="h3"] { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1fr; }
+.syl-box .j { font-size: var(--f2); }
+/* 음절이 다 차면 그 칸에서 한 글자로 모인다 — ① 4.7 */
+.syl-box.done { font-size: var(--f1); border-style: solid; border-color: rgba(31, 28, 23, .6); grid-template-columns: 1fr; grid-template-rows: 1fr; }
+/* 커서 — 깜빡이는 세로 막대 (📝 모양은 디자인 단계) */
+.syl-box.cursor::after { content: ""; position: absolute; left: 50%; top: 22%; width: 2px; height: 56%; background: var(--meok); animation: caret 1.05s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+.syl-box.shake { animation: shake-x 340ms ease; }
+.syl-box .wait, .syl-box.wait { color: transparent; }
+.syl-box.ink::before {
+  content: ""; position: absolute; inset: calc(-1.4 * var(--u)); border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(31, 28, 23, .3), rgba(31, 28, 23, 0));
+  animation: inkspread .9s ease-out forwards;
+}
+@keyframes inkspread { 0% { transform: scale(.3); opacity: .9; } 100% { transform: scale(1.2); opacity: 0; } }
+.pool {
+  position: absolute; left: 0; right: 0; top: calc(10.7 * var(--u));
+  display: flex; flex-wrap: wrap; gap: calc(1.1 * var(--u)) calc(1.5 * var(--u)); justify-content: center;
+}
+.piece {
+  font-size: var(--f2); line-height: 1.35; color: var(--meok); cursor: grab; touch-action: none;
+  transition: opacity .2s ease, transform .45s ease, text-shadow .45s ease;
+}
+.piece.lifted { opacity: .3; }
+.piece.used { opacity: 0; pointer-events: none; }
+.piece.lift { transform: translateY(calc(-.9 * var(--u))) scale(1.14); text-shadow: 0 0 calc(.6 * var(--u)) rgba(31, 28, 23, .45); }
+.ghost-piece { position: fixed; z-index: 999; pointer-events: none; color: var(--meok); transform: translate(-50%, -50%); font-family: 'Gowun Batang', serif; }
+.flyer {
+  position: absolute; z-index: 6; pointer-events: none; line-height: 1.35; color: var(--meok);
+  text-shadow: 0 0 calc(.6 * var(--u)) rgba(31, 28, 23, .45); transform: translate(0, 0) scale(1.14);
+  transition: transform .8s cubic-bezier(.45, 0, .2, 1);
+}
+.howto { position: absolute; left: 0; right: 0; bottom: calc(.7 * var(--u)); margin: 0; text-align: center; font-size: var(--f5); line-height: 1.5; color: var(--meok-soft); }
+
+/* ② 힌트 퀴즈 */
+.panel-hint { gap: calc(1.5 * var(--u)); align-items: flex-start; padding-top: calc(2.4 * var(--u) + 4.2 * var(--u)); }
+.panel-hint .episode { margin: 0; font-size: var(--f4); line-height: 1.75; }
+.panel-hint .question { margin: 0; font-size: var(--f3); line-height: 1.6; }
+.options { display: flex; gap: calc(1.5 * var(--u)); width: 100%; }
+.option {
+  flex: 1; font-size: var(--f4); color: var(--meok); background: transparent; border: 1px solid rgba(31, 28, 23, .3);
+  padding: calc(.9 * var(--u)) calc(1.6 * var(--u)); text-align: center; cursor: pointer;
+  transition: opacity .25s ease, background .2s ease, border-color .2s ease;
+}
+@media (hover: hover) { .option:enabled:hover { background: rgba(31, 28, 23, .07); } }
+/* 틀린 보기 — 흐려지고 가로줄 (📝 색·굵기는 디자인 단계) */
+.option.gone { opacity: .28; text-decoration: line-through; cursor: default; }
+/* 맞힌 보기 — 나머지는 물러나고, 고른 보기는 먹빛으로 차며 살짝 커졌다 내려앉는다 */
+.option.away { opacity: .12; cursor: default; }
+.option.right { background: var(--meok); color: var(--hanji-hi); border-color: var(--meok); animation: settle .55s cubic-bezier(.3, 0, .2, 1); opacity: 1; }
+@keyframes settle { 0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+/* ③ 점검 퀴즈 */
+.panel-check { gap: calc(1.5 * var(--u)); align-items: flex-start; padding-top: calc(2.4 * var(--u) + 4.2 * var(--u)); }
+.panel-check .question { margin: 0; font-size: var(--f3); line-height: 1.6; }
+.explain { margin: 0; width: 100%; font-size: var(--f5); line-height: 1.7; color: var(--meok); opacity: 0; transition: opacity .25s ease; }
+.explain.on { opacity: 1; }
+.explain.center { text-align: center; }
+.explain.sizer { position: absolute; visibility: hidden; left: calc(3 * var(--u)); right: calc(3 * var(--u)); width: auto; pointer-events: none; }
+.code-row { display: flex; align-items: center; justify-content: center; gap: calc(2 * var(--u)); width: 100%; }
+.cells { display: flex; gap: calc(1 * var(--u)); cursor: text; outline: none; }
+.cells:focus-visible { outline: 2px solid var(--seal); outline-offset: calc(.6 * var(--u)); }
+.cell {
+  position: relative; width: calc(4.4 * var(--u)); height: calc(4.8 * var(--u)); border-bottom: 1px solid var(--meok);
+  display: flex; align-items: center; justify-content: center; font-size: var(--f2); line-height: 1;
+}
+.cells.stale .cell { color: var(--meok-soft); }
+.cell.cursor::after { content: ""; position: absolute; left: 50%; top: 22%; width: 2px; height: 56%; background: var(--meok); animation: caret 1.05s steps(1) infinite; }
+/* 「통과」 낙관 — 판 한가운데 크게 · 1.2초 내내 고르게 찍힌다 (목업에서 만든 그대로 · 10-3-1) */
+.seal {
+  position: absolute; left: 50%; top: 50%; z-index: 5; pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-5deg) scale(1.7); opacity: 0;
+  border: calc(.4 * var(--u)) solid var(--seal); color: var(--seal); background: rgba(243, 236, 219, .6);
+  font-weight: 700; font-size: var(--f1); line-height: 1; letter-spacing: .14em; text-indent: .14em;
+  padding: calc(1.8 * var(--u)) calc(2.6 * var(--u));
+  transition: transform 1.2s cubic-bezier(.45, 0, .25, 1), opacity 1.2s cubic-bezier(.45, 0, .55, 1);
+}
+.seal.on { opacity: .93; transform: translate(-50%, -50%) rotate(-5deg) scale(1); }
+
+/* 한지 넘김 */
+.sheet { position: absolute; inset: 0; z-index: 8; pointer-events: none; transform-style: preserve-3d; }
+.strip { position: absolute; top: 0; height: 100%; transform-origin: left center; transform-style: preserve-3d; }
+.strip > .face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background-color: var(--hanji-hi); }
+.strip > .face.back { transform: rotateY(180deg); filter: brightness(.95); }
+.strip .page-copy { position: absolute; top: 0; }
+.strip .page-copy > .panel { position: absolute; inset: 0; }
+.strip .shade { position: absolute; inset: 0; background: #1F1C17; opacity: 0; }
+
+/* 기기 자판을 부르는 숨은 입력칸 */
+.kb-input {
+  position: absolute; left: 0; top: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0;
+  font-size: 16px; resize: none; caret-color: transparent; color: transparent; background: transparent;
+}

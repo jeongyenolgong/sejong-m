@@ -1,0 +1,24 @@
+{
+  "name": "sejong-audience",
+  "version": "0.1.0",
+  "description": "세종대왕을 알현하라! — 웹 게임",
+  "scripts": {
+    "dev": "npm run data && vite",
+    "build": "npm run data && vite build",
+    "preview": "vite preview",
+    "data": "node scripts/build-data.mjs",
+    "placeholders": "node scripts/make-placeholders.mjs",
+    "sync-content": "node scripts/sync-content.mjs",
+    "sync-to-m": "node scripts/sync-to-m.mjs"
+  },
+  "type": "module",
+  "devDependencies": {
+    "exceljs": "^4.4.0",
+    "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1"
+  },
+  "private": true
+}
