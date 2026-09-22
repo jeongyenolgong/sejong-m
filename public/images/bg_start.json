@@ -24,14 +24,5 @@
       "w": 26,
       "duration": 150
     }
-  ],
-  "birds": [
-    {
-      "file": "cut_bird_1.svg",
-      "x": 20,
-      "y": 16,
-      "w": 7,
-      "duration": 46
-    }
   ]
 }

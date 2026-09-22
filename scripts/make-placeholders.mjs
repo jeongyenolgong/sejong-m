@@ -40,7 +40,7 @@ ws.eachRow((row, n) => {
 // 크기 — 가로 배경은 3:2로 뽑아 16:10으로 자른 1536×960 · 세로 캐릭터는 2:3
 const SIZE = {
   wide: [1536, 960], tall: [1024, 1536], board: [1480, 770],
-  door: [400, 700], cloud: [420, 150], bird: [160, 70],
+  door: [400, 700], cloud: [420, 150],
 };
 
 function svg(w, h, lines, extra = '', dark = false) {
@@ -122,13 +122,12 @@ for (const r of list) {
   } else if (name === 'bg_start') {
     cfg = {
       ...cfg,
-      // 오려 낸 구름·새 — 그림이 오면 오려 낸 조각 파일로 바꾼다. duration은 한 번 가로지르는 초
+      // 오려 낸 구름 — 그림이 오면 오려 낸 조각 파일로 바꾼다. duration은 한 번 가로지르는 초
       clouds: [
         { file: 'cut_cloud_1.svg', x: 8, y: 10, w: 22, duration: 90 },
         { file: 'cut_cloud_2.svg', x: 52, y: 20, w: 16, duration: 120 },
         { file: 'cut_cloud_3.svg', x: 30, y: 5, w: 26, duration: 150 },
       ],
-      birds: [{ file: 'cut_bird_1.svg', x: 20, y: 16, w: 7, duration: 46 }],
     };
   }
 
@@ -150,7 +149,7 @@ for (const r of list) {
   writeConfig(name, cfg) ? made++ : kept++;
 }
 
-// 파생 — 문짝(정면 그림에서 오려 낸다) · 구름 · 새
+// 파생 — 문짝(정면 그림에서 오려 낸다) · 구름
 for (const g of DOOR_GATES) {
   for (const side of ['l', 'r']) {
     const [w, h] = SIZE.door;
@@ -160,10 +159,6 @@ for (const g of DOOR_GATES) {
 for (let i = 1; i <= 3; i++) {
   const [w, h] = SIZE.cloud;
   writeSvg(`cut_cloud_${i}`, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}"><ellipse cx="${w / 2}" cy="${h / 2}" rx="${w / 2 - 4}" ry="${h / 2 - 4}" fill="#2E2620" fill-opacity=".09"/><text x="${w / 2}" y="${h / 2 + 8}" font-size="22" text-anchor="middle" fill="#2E2620" fill-opacity=".45" font-family="sans-serif">cut_cloud_${i}</text></svg>\n`);
-}
-{
-  const [w, h] = SIZE.bird;
-  writeSvg('cut_bird_1', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" fill="none" stroke="#2E2620" stroke-opacity=".5" stroke-width="5" stroke-linecap="round"><path d="M10 40 q18 -20 34 0 q18 -20 34 0"/><path d="M92 22 q14 -14 26 0 q14 -14 26 0"/></svg>\n`);
 }
 
 console.log(`public/images — 설정 파일 새로 ${made} · 이미 있어 그대로 ${kept}`);

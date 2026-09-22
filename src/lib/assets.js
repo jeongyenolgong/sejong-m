@@ -30,7 +30,7 @@ export async function preloadAll(names) {
   for (const c of cfgs) {
     files.push(c.file);
     if (c.doors) files.push(c.doors.left.file, c.doors.right.file);
-    for (const p of [...(c.clouds || []), ...(c.birds || [])]) files.push(p.file);
+    for (const p of c.clouds || []) files.push(p.file);
   }
   await Promise.all(files.map(preload));
   return cfgs;

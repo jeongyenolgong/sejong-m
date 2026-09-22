@@ -12,7 +12,7 @@
   margin: calc(2.6 * var(--u)) 0 0; font-size: calc(2.5 * var(--u)); letter-spacing: .06em;
   color: var(--meok-soft);
 }
-.start .cloud, .start .bird { pointer-events: none; }
+.start .cloud { pointer-events: none; }
 
 /* ── ② 캐릭터 선택 ── */
 .select .select-stack {
