@@ -31,7 +31,9 @@ async function main() {
 
   // 알림창 · 판 · 갈무리 · 서약서에 까는 본선 한지(EL-02)
   const paper = await config('el_hanji_main');
-  document.documentElement.style.setProperty('--paper-main', `url("${imageUrl(paper.file)}")`);
+  // CSS 변수 안의 상대 경로는 CSS 파일 자리를 기준으로 풀리므로, 페이지 기준의 온전한 주소로 넘긴다
+  const paperUrl = new URL(imageUrl(paper.file), document.baseURI).href;
+  document.documentElement.style.setProperty('--paper-main', `url("${paperUrl}")`);
 
   let game = load();
   await startScreen();
