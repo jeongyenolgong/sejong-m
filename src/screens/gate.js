@@ -16,7 +16,6 @@ import { mount, cover } from '../lib/stage.js';
 import { Controls } from '../lib/controls.js';
 import { Walker, walkLoop } from '../lib/walker.js';
 import { notice } from '../lib/notice.js';
-import { save } from '../lib/save.js';
 import { T, reduced } from '../lib/timing.js';
 import { Board } from '../boards/board.js';
 import { PLACES, boltsBefore } from './journey.js';
@@ -84,7 +83,6 @@ export async function gateScreen(game, charCfg, p) {
     });
     game.solved = first + k + 1;
     game.place = p;
-    save(game);                                          // 빗장을 풀 때마다 저장
     hideActors(false);                                   // 판이 다 걷히면 바로 조작키가 먹는다
   }
 

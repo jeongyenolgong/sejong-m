@@ -6,6 +6,7 @@
 /* 판 높이 — 갈무리 20.0 · 서약서 35.9 · 버튼 자리(화면 아래 7 + 버튼) 위로 남은 높이의 가운데 */
 .gboard {
   position: absolute; left: calc(50% - 32 * var(--u)); width: calc(64 * var(--u)); overflow: hidden;
+  background-image: var(--paper-main);          /* 본선 한지 (요소정의 10-4 · 2026-09-22) */
   --h: 20;
   height: calc(var(--h) * var(--u));
   top: max(calc(2.4 * var(--u)), calc((100vh - 15.5 * var(--u) - var(--h) * var(--u)) / 2));

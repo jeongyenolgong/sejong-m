@@ -25,6 +25,13 @@ function text(v) {
   return String(v);
 }
 
+// 작은따옴표 ' 를 모양 있는 ‘ ’ 로 — 고운바탕의 ' 는 세로 막대로 보인다 (2026-09-23)
+//   한 칸 안에서 짝지어 여닫는다 · 엑셀은 ' 그대로 둔다(글의 SSOT는 손대지 않고 화면에서만 바꾼다)
+function curlySingle(s) {
+  let open = true;
+  return s.replace(/'/g, () => { const q = open ? '‘' : '’'; open = !open; return q; });
+}
+
 const KEEP_SPACES = new Set(['문장 앞', '문장 뒤']);
 
 // 첫 줄을 머리로 삼아 줄마다 {머리: 값} 으로 읽는다
@@ -42,7 +49,7 @@ async function rows(file, sheetName) {
     // 「문장 앞」·「문장 뒤」는 끝의 띄어쓰기가 뜻을 가지므로 자르지 않는다
     head.forEach((h, i) => {
       if (!h) return;
-      const v = text(row.getCell(i).value);
+      const v = curlySingle(text(row.getCell(i).value));
       o[h] = KEEP_SPACES.has(h) ? v : v.trim();
     });
     if (Object.values(o).some((v) => v !== '')) list.push(o);

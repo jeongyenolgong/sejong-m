@@ -126,7 +126,7 @@ export async function journey(game) {
   const charCfg = await config(game.character === 'f' ? 'ch_back_f' : 'ch_back_m');
   await preloadAll(PLACES.map((p) => p.map));
   let p = game.place;
-  let arrival = p === 0 ? 'prologue' : 'resume';
+  let arrival = 'prologue';
 
   for (;;) {
     const view = new MapView(game, charCfg);

@@ -12,7 +12,6 @@ import './styles/ending.css';
 
 import { t } from './lib/text.js';
 import { preloadAll, config, imageUrl } from './lib/assets.js';
-import { load, save, clear } from './lib/save.js';
 import { drawFavicon } from './lib/favicon.js';
 import { startScreen } from './screens/start.js';
 import { selectScreen } from './screens/select.js';
@@ -35,21 +34,11 @@ async function main() {
   const paperUrl = new URL(imageUrl(paper.file), document.baseURI).href;
   document.documentElement.style.setProperty('--paper-main', `url("${paperUrl}")`);
 
-  let game = load();
+  // 진행을 저장하지 않는다 — 「이어서 하기」 버튼이 없으니 기능도 없다. 켤 때마다 캐릭터 선택부터 (2026-09-23)
   await startScreen();
-
-  // 끝까지 한 뒤 다시 켜서 「시작」을 누르면 처음부터 (요소정의 3절 · 2026-09-22)
-  if (game && game.ended) { clear(); game = null; }
-
-  if (!game) {
-    const character = await selectScreen();
-    game = { character, solved: 0, place: -1, ended: false };
-    save(game);                                 // 저장은 캐릭터를 확정한 순간부터
-  }
-  if (game.place < 0) {
-    await prologue(game.character);
-    game.place = 0;                             // 지도 1장째(육조거리)에서 시작 — 저장은 빗장을 풀 때
-  }
+  const character = await selectScreen();
+  const game = { character, solved: 0, place: 0 };   // 지도 1장째(육조거리)에서 시작
+  await prologue(game.character);
 
   await journey(game);                          // 지도와 문 — 빗장 11개
   const hall = await audience(game);            // 알현

@@ -12,7 +12,6 @@ import { config, imageUrl } from '../lib/assets.js';
 import { savePdf } from '../lib/pdf.js';
 import { scene } from '../lib/scene.js';
 import { mount, cover } from '../lib/stage.js';
-import { save } from '../lib/save.js';
 import { T, reduced } from '../lib/timing.js';
 import jamoData from '../data/jamo.json';
 
@@ -115,8 +114,6 @@ export async function ending(game, { screen, dim, layer }) {
   // 종료 — 저장 없이 눌러도 막지 않는다
   await new Promise((r) => endB.addEventListener('click', r, { once: true }));
   document.removeEventListener('keydown', onKey);
-  game.ended = true;
-  save(game);                                  // 끝낸 뒤 다시 켜면 처음부터
   wrap.classList.add('lifting');               // 서약서 판이 걷힌다(0.9초)
   await wait(reduced() ? 0 : T.boardLift);
   await cover('dark', T.endDark, 1);           // 어두워졌다가
