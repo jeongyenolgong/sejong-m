@@ -26,14 +26,15 @@
   --f4: calc(1.6 * var(--u));   /* ④ 누르거나 따른다 */
   --f5: calc(1.4 * var(--u));   /* ⑤ 곁에 딸린다 */
 
-  /* 빛깔 — 📝 디자인 단계에서 정한다. 지금은 자리만 잡아 둔 값 */
-  --meok: #2E2620;              /* 먹빛 — 요소정의 8 */
+  /* 빛깔 — ✅ 디4-2(2026-09-26 · 새 그림에서 잰 값) */
+  --meok: #2E2620;              /* 먹빛 — 그림 속 먹선의 가운데 */
   --meok-soft: #6A6355;
-  --hanji: #E9E0CC;
+  --hanji: #ECE4D4;             /* 한지 — 본선 한지 그림 평균 */
   --hanji-hi: #F3ECDB;
   --seal: #9E3B2F;              /* 낙관 붉은빛 */
-  --dim: rgba(31, 28, 23, .42); /* 판 뒤를 어둡게 — 먹 42% (📝 디자인 단계) */
-  --bg: #E9E0CC;                /* 불러오는 동안 깔리는 시작 화면 바탕색 */
+  --dim: rgba(31, 28, 23, .42); /* 판 뒤를 어둡게 — 먹 42% + 흐림 2px · 판·알림창·안내문·자막 모두 같은 값 (디4-3) */
+  --bg: #E5D2B2;                /* 불러오는 동안 깔리는 바탕 — 새 시작 그림의 하늘 (디4-2) */
+  --shadow: 0 calc(1 * var(--u)) calc(2.4 * var(--u)) rgba(31, 28, 23, .22);   /* 판·알림창·버튼 그림자 (디4-4) */
 }
 @media (orientation: portrait) {
   :root { --u: min(1.29vw, 1vh); --u: min(1.29vw, 1dvh); }
@@ -62,37 +63,56 @@ img { -webkit-user-drag: none; user-select: none; -webkit-user-select: none; }
 }
 .screen { position: absolute; inset: 0; overflow: hidden; }
 
-/* 장면 — 16:10 그림이 화면을 덮는다 */
+/* 장면 — 16:10 그림이 화면을 덮는다
+   --pan: 그림이 화면보다 넓을 때(세로 · 4:3) 캐릭터를 따라 옆으로 민 거리 (기7 · lib/camera.js) */
 .scene {
   position: absolute; left: 50%; top: 50%;
   width: max(100vw, 160vh); width: max(100vw, 160dvh); aspect-ratio: 16 / 10;
-  transform: translate(-50%, -50%);
+  transform: translate(calc(-50% + var(--pan, 0px)), -50%);
 }
 .scene-bg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .scene > .thing { position: absolute; }
 
-/* 진행 버튼 — 모든 화면이 같은 자리 · 화면 아래 가운데 (📝 생김새는 디자인 단계) */
+/* ── 버튼 (디4-1 · 2026-09-26) ──
+   누르는 것(진행 버튼 · 조작키 · 넘김 화살표)은 한지 그림 바탕 · 두 겹 먹 테두리(바깥 2px · 0.35 안쪽 1px) · 판과 같은 그림자
+   누를 때·올릴 때는 먹으로 채우고 안쪽 가는 선을 한지색으로 뒤집는다 · 누를 수 없을 때는 글자·테두리만 먹 30%
+   판은 읽는 종이라 한 줄 테두리 — 누르는 것과 읽는 것이 갈린다 */
+.cta, .key, .side {
+  color: var(--meok); background: var(--hanji-hi) var(--paper-main) center / cover; border: 2px solid var(--meok); border-radius: 0; opacity: 1;
+  box-shadow: inset 0 0 0 calc(.35 * var(--u)) var(--hanji-hi), inset 0 0 0 calc(.35 * var(--u) + 1px) var(--meok), var(--shadow);
+  cursor: pointer; transition: background .15s, color .15s, opacity .4s ease;
+}
+.cta:disabled, .key:disabled, .side:disabled {
+  color: rgba(31, 28, 23, .3); border-color: rgba(31, 28, 23, .3); cursor: default;
+  box-shadow: inset 0 0 0 calc(.35 * var(--u)) var(--hanji-hi), inset 0 0 0 calc(.35 * var(--u) + 1px) rgba(31, 28, 23, .3), var(--shadow);
+}
+.key.on, .cta:enabled:active, .side:enabled:active {
+  background: var(--meok); color: var(--hanji-hi);
+  box-shadow: inset 0 0 0 calc(.35 * var(--u)) var(--meok), inset 0 0 0 calc(.35 * var(--u) + 1px) var(--hanji-hi), var(--shadow);
+}
+@media (hover: hover) {
+  .cta:enabled:hover, .key:enabled:hover, .side:enabled:hover {
+    background: var(--meok); color: var(--hanji-hi);
+    box-shadow: inset 0 0 0 calc(.35 * var(--u)) var(--meok), inset 0 0 0 calc(.35 * var(--u) + 1px) var(--hanji-hi), var(--shadow);
+  }
+}
+.cta:focus-visible, .btn:focus-visible, .key:focus-visible, .side:focus-visible { outline: 2px solid var(--seal); outline-offset: 3px; }
+
+/* 진행 버튼 — 모든 화면이 같은 자리 · 화면 아래 가운데 */
 .cta-row {
   position: absolute; left: 50%; bottom: calc(7 * var(--u)); transform: translateX(-50%);
   display: flex; gap: calc(2.4 * var(--u)); z-index: 20;
 }
-.cta {
-  font-size: calc(2.7 * var(--u)); letter-spacing: .34em; text-indent: .34em;
-  color: var(--meok); background: rgba(243, 236, 219, .7); border: 1px solid var(--meok); border-radius: 0;
-  padding: calc(1.5 * var(--u)) calc(5.4 * var(--u)); cursor: pointer;
-  transition: background .15s, color .15s, opacity .15s;
-}
-.cta:disabled { opacity: .28; cursor: default; }
-@media (hover: hover) { .cta:enabled:hover { background: var(--meok); color: var(--hanji-hi); } }
-.cta:focus-visible, .btn:focus-visible { outline: 2px solid var(--seal); outline-offset: 3px; }
+.cta { font-size: calc(2.7 * var(--u)); letter-spacing: .34em; text-indent: .34em; padding: calc(1.5 * var(--u)) calc(5.4 * var(--u)); }
 
-/* 판 안의 작은 버튼(실마리 · 돌아가기 · 확인 · 닫기) */
+/* 판 안의 작은 버튼(실마리 · 돌아가기 · 확인 · 닫기) — 바탕 없음 · 먹 1px 한 줄 · 그림자 없음 */
 .btn {
   font-size: var(--f4); letter-spacing: .14em; text-indent: .14em;
   color: var(--meok); background: transparent; border: 1px solid var(--meok);
   padding: calc(.8 * var(--u)) calc(2.4 * var(--u)); cursor: pointer;
 }
-.btn:disabled { opacity: .35; cursor: default; }
+.btn:disabled { color: rgba(31, 28, 23, .3); border-color: rgba(31, 28, 23, .3); cursor: default; }
+.btn:enabled:active { background: var(--meok); color: var(--hanji-hi); }
 @media (hover: hover) { .btn:enabled:hover { background: var(--meok); color: var(--hanji-hi); } }
 
 /* 뒤를 어둡게 — 판·알림창이 떠 있는 동안 */
@@ -103,11 +123,14 @@ img { -webkit-user-drag: none; user-select: none; -webkit-user-select: none; }
 }
 .dim.on { opacity: 1; pointer-events: auto; }
 
-/* 넘어갈 때 덮는 막 (어두움 · 빛) */
+/* 넘어갈 때 덮는 막 (어두움 · 빛) — 디4-10 */
 .veil { position: absolute; inset: 0; z-index: 90; pointer-events: none; opacity: 0; background: #16130f; }
 .veil.light { background: radial-gradient(60% 70% at 50% 45%, #fffaf0 0%, #fbf3df 55%, #f3e8cc 100%); }
 
 /* 한 칸 안에서 떨림 */
+/* 커서·지금 자리 — 낙관 붉은빛이 2.8초로 숨 쉰다 (디4-5 · 디4-7 · 디7) */
+@keyframes cursor-breathe { 0%, 100% { border-color: rgba(158, 59, 47, 1); } 50% { border-color: rgba(158, 59, 47, .4); } }
+
 @keyframes shake-x {
   0%, 100% { translate: 0 0; }
   20% { translate: calc(-.7 * var(--u)) 0; }

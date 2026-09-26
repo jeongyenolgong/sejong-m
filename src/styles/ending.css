@@ -17,8 +17,8 @@
 /* 판 가운데 높이 */
 .archive .side { top: calc(max(calc(2.4 * var(--u)), calc((100vh - 15.5 * var(--u) - 20 * var(--u)) / 2)) + 10 * var(--u)); }
 .archive .side { top: calc(max(calc(2.4 * var(--u)), calc((100dvh - 15.5 * var(--u) - 20 * var(--u)) / 2)) + 10 * var(--u)); transform: translateY(-50%); }
-.archive .g-prev { left: calc(50% - 39.4 * var(--u)); }
-.archive .g-next { left: calc(50% + 33.4 * var(--u)); right: auto; }
+.archive .g-prev { left: calc(50% - 39.4 * var(--u)); }   /* 판 옆 2칸 · 정사각 5.4 (디5) */
+.archive .g-next { left: calc(50% + 34 * var(--u)); right: auto; }
 .gpage { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .gpage.sent { padding: calc(6.6 * var(--u)) calc(3 * var(--u)) calc(2.4 * var(--u)); }
 .gpage.pledge { padding: calc(2.8 * var(--u)) calc(5 * var(--u)) calc(2.6 * var(--u)); }
@@ -30,15 +30,21 @@
 .pitems { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: calc(.5 * var(--u)); font-size: var(--f4); line-height: 1.8; }
 .pfoot { margin-top: calc(2 * var(--u)); display: flex; flex-direction: column; align-items: center; gap: calc(1 * var(--u)); }
 .pcheck { display: flex; align-items: center; gap: calc(1 * var(--u)); cursor: pointer; font-size: var(--f4); }
-/* 체크 칸 B-11 — 하드코딩 표시 · 📝 모양은 디자인 단계 */
+/* 서약서 판 틀 — 판 가장자리에서 1 안쪽에 굵은 먹선 0.28 + 1.65 안쪽에 가는 먹선 1px(옛 책 테두리 꼴) (디12) */
+.gboard.tall::before, .gboard.tall::after { content: ""; position: absolute; pointer-events: none; z-index: 1; }
+.gboard.tall::before { inset: calc(1 * var(--u)); border: calc(.28 * var(--u)) solid var(--meok); }
+.gboard.tall::after { inset: calc(1.65 * var(--u)); border: 1px solid var(--meok); }
+/* 체크 칸 B-11 — 2.6 · 두 겹 먹선(바깥 2px · 0.25 안쪽 1px) · 누르면 도장 찍듯 낙관 붉은빛으로 차고 한지색 ✓ (디12) */
 .pcheck-box {
   appearance: none; -webkit-appearance: none; margin: 0; flex: none; cursor: pointer;
-  width: calc(2.1 * var(--u)); height: calc(2.1 * var(--u)); border: 1px solid var(--meok); background: transparent;
-  display: grid; place-items: center;
+  width: calc(2.6 * var(--u)); height: calc(2.6 * var(--u)); border: 2px solid var(--meok); background: var(--hanji-hi);
+  box-shadow: inset 0 0 0 calc(.25 * var(--u)) var(--hanji-hi), inset 0 0 0 calc(.25 * var(--u) + 1px) var(--meok);
+  display: grid; place-items: center; transition: background .2s ease, box-shadow .2s ease;
 }
+.pcheck-box:checked { background: var(--seal); border-color: var(--seal); box-shadow: none; }
 .pcheck-box::after {
-  content: ""; width: calc(.6 * var(--u)); height: calc(1.15 * var(--u)); border: solid var(--seal);
-  border-width: 0 calc(.28 * var(--u)) calc(.28 * var(--u)) 0; transform: rotate(45deg) translate(-.1em, -.15em); opacity: 0;
+  content: ""; width: calc(.7 * var(--u)); height: calc(1.35 * var(--u)); border: solid var(--hanji-hi);
+  border-width: 0 calc(.32 * var(--u)) calc(.32 * var(--u)) 0; transform: rotate(45deg) translate(-.1em, -.15em); opacity: 0;
   transition: opacity .2s ease;
 }
 .pcheck-box:checked::after { opacity: 1; }
@@ -55,7 +61,6 @@
 /* [저장] [종료] — 서약서에 체크하면 나타난다 · 자리는 처음부터 비워 둔다 */
 .end-ctas { opacity: 0; pointer-events: none; transition: opacity .5s ease; }
 .end-ctas.on { opacity: 1; pointer-events: auto; }
-.end-ctas .cta { background: rgba(243, 236, 219, .95); }
 
 /* PDF로 뜰 때 — 화면 밖에서 판 하나를 정한 크기로 그린다 */
 .pdf-stage { position: fixed; left: -10000px; top: 0; --u: 16px; }

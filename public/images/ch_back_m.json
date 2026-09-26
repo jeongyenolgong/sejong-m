@@ -1,5 +1,11 @@
 {
   "file": "ch_back_m.webp",
   "width": 446,
-  "height": 1466
+  "height": 1466,
+  "parts": {
+    "body": "ch_back_m_body.webp",
+    "L": "ch_back_m_L.webp",
+    "R": "ch_back_m_R.webp",
+    "yc": 68.55
+  }
 }

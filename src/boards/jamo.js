@@ -1,5 +1,5 @@
 // 자모 조합 판 — 세 영역 (요소정의 5-2-3 · 6 · 7 · 8 · 8-1 · 8-2 · 9 · 10 · 11-1)
-//   ① 머리  Q-01 할 일 안내(판 맨 위 · ④ 1.6 굵게)            판 오른쪽 위: 실마리 B-04
+//   ① 머리  Q-01 할 일 안내(판 맨 위 · ④ 1.6 굵게)            판 오른쪽 위: 실마리 B-04 · 판 왼쪽 위: 「2 / 3」 이 문의 몇 번째 판(기5)
 //   ② 문제  문장 + 빈칸(빈칸 길이는 낱말의 음절 수를 따른다 · 두 줄로 쪼개지지 않는다)
 //   ③ 조합 영역(테두리 하나) — 음절 칸 · 그 아래 조각 한 줄 · 맨 아래 Q-02 넣는 법 안내
 //
@@ -7,6 +7,7 @@
 // · 칸은 음절 수만 보인다(칸 안의 자모 배치는 조각을 놓아야 드러난다)
 // · 한 음절 안에서는 차례를 안 지켜도 제자리에 앉는다 · 안 맞으면 조각은 돌아가고 그 칸이 흔들린다 · 글은 없다
 // · 자판으로 친 자모는 커서가 있는 칸으로만 간다 · 커서는 칸을 누르거나 자판을 칠 때 첫 빈 칸에 · ← → 로 옮긴다
+// · 연습 판(기1) — 실마리가 반짝이고, 실마리를 누르기 전에는 조각이 움직이지 않는다(끌어도 안 따라옴 · 자판도 안 들어감)
 import { el, wait, replay, shuffle } from '../lib/dom.js';
 import { t } from '../lib/text.js';
 import { compose, layoutOf, atomsOf, join, keyToJamo } from '../lib/hangul.js';
@@ -16,18 +17,19 @@ import { T, reduced } from '../lib/timing.js';
 const SINGLE = [...'ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎㅏㅐㅑㅓㅔㅕㅗㅜㅡㅣ'];
 
 export class JamoPanel {
-  constructor(item, { onHint, keyboard, onKeyboard }) {
+  constructor(item, { onHint, keyboard, counter, practice = false, maxHints }) {
     this.item = item;
     this.keyboard = keyboard;
-    this.onKeyboard = onKeyboard;            // 자판이 오르내리면 판을 밀어 올리거나 내린다
-    this.hLeft = item.syllables.length;      // 실마리를 쓸 수 있는 수 = 음절 수 (화면에 적지 않는다)
+    this.maxHints = maxHints ?? item.syllables.length;
+    this.hLeft = this.maxHints;              // 실마리를 쓸 수 있는 수 = 음절 수 (버튼에 적지 않는다 · 연습 판은 한 번)
+    this.locked = practice;
     this.cursorOn = false;
     this.sel = 0;
     this.pending = null;                     // 겹자모의 앞 반쪽(ㄹ → ㄼ 을 기다리는 중)
     this.solved = false;
     this.done = new Promise((r) => { this.resolveDone = r; });
 
-    this.hintBtn = el('button.btn.corner', { type: 'button', text: t('B-04'), onclick: () => onHint() });
+    this.hintBtn = el(`button.btn.corner${practice ? '.glow' : ''}`, { type: 'button', text: t('B-04'), onclick: () => { this.hintBtn.classList.remove('glow'); onHint(); } });
     this.boxes = item.syllables.map((parts) => ({ parts, got: parts.map(() => null), node: null }));
     this.slots = el('div.slots', {}, this.boxes.map((b, i) => {
       b.node = el('span.syl-box', { 'data-t': layoutOf(b.parts), onclick: () => this.tapBox(i) });
@@ -49,8 +51,9 @@ export class JamoPanel {
 
     this.blank = el('span.blank', {}, [el('span.word', { text: item.word })]);
     this.work = el('div.work', {}, [this.slots, this.pool, el('p.howto', { text: t('Q-02') })]);
-    this.el = el('div.panel.panel-jamo', {}, [
+    this.el = el(`div.panel.panel-jamo${practice ? '.locked' : ''}`, {}, [
       this.hintBtn,
+      counter ? el('p.count', { text: `${counter[0]} / ${counter[1]}`, 'aria-label': `${counter[1]}개 가운데 ${counter[0]}번째` }) : null,
       el('p.head', { text: t('Q-01') }),
       el('p.sentence', {}, [item.before, this.blank, item.after]),
       this.work,
@@ -61,6 +64,7 @@ export class JamoPanel {
   }
 
   destroy() { document.removeEventListener('keydown', this.onDocKey); }
+  unlock() { this.locked = false; this.el.classList.remove('locked'); }
 
   // ── 칸 그리기 ──
   draw(b) {
@@ -118,7 +122,7 @@ export class JamoPanel {
 
   // ── 끌어다 놓기 ──
   drag(e, p) {
-    if (p.classList.contains('used') || this.solved || this.busy) return;
+    if (p.classList.contains('used') || this.solved || this.busy || this.locked) return;
     e.preventDefault();
     // 조각을 끌어당기는 순간 자판이 내려가고 커서도 사라진다
     this.keyboard.close();
@@ -150,7 +154,7 @@ export class JamoPanel {
 
   // ── 자판 ──
   tapBox() {
-    if (this.solved || this.busy) return;
+    if (this.solved || this.busy || this.locked) return;
     // 칸을 누르면 자판이 올라온다 — 커서는 누른 칸이 아니라 첫 빈 칸에
     this.cursorOn = true;
     this.sel = this.firstEmpty();
@@ -161,7 +165,8 @@ export class JamoPanel {
   }
 
   docKey(e) {
-    if (this.solved || this.busy || this.keyboard.isOpen || !this.el.isConnected) return;
+    // 판을 두고 지도로 나가 있는 동안(문 앞 화면이 떨어져 있거나 · 튜토리얼에서 판을 치워 둔 동안)에는 화살표가 캐릭터 몫이다
+    if (this.solved || this.busy || this.locked || this.keyboard.isOpen || !this.el.isConnected || this.el.closest('.away')) return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {          // ← → 로 커서를 옆 빈 칸으로
       e.preventDefault();
@@ -208,7 +213,7 @@ export class JamoPanel {
     for (const b of this.boxes) { const k = b.got.findIndex((g) => !g); if (k >= 0) return { b, k }; }
     return null;
   }
-  get hintsUsed() { return this.item.syllables.length - this.hLeft; }
+  get hintsUsed() { return this.maxHints - this.hLeft; }
 
   // 돌아와 잠깐 멈춤 → 조각 줄에서 그 조각이 짙어지며 떠오름 → 스스로 제 칸으로 날아가 앉음 → 칸 둘레에 먹이 번짐
   async giveHint(host) {
@@ -218,7 +223,7 @@ export class JamoPanel {
     const p = this.pieces.find((x) => x.textContent === ch && !x.classList.contains('used'));
     if (!p) return;
     this.hLeft -= 1;
-    this.hintBtn.disabled = this.hLeft <= 0;                 // 다 쓰면 비활성 — 남은 수는 적지 않는다
+    this.hintBtn.disabled = this.hLeft <= 0;                 // 다 쓰면 「누를 수 없음」 — 남은 수는 버튼에 적지 않는다
     this.busy = true;
     const seat = () => { tg.b.got[tg.k] = ch; p.classList.remove('lift'); p.classList.add('used'); this.draw(tg.b); };
     if (reduced()) { seat(); this.busy = false; this.check(); return; }

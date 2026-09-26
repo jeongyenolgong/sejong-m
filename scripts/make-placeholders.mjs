@@ -92,7 +92,7 @@ for (const r of list) {
       cfg.gate = { x1: 43, x2: 57, y: 18 };
       extra += rect(w * 0.4, 0, w * 0.2, h * 0.16, 0.18) + label(w / 2, h * 0.1, n === 4 ? '다리 자리' : '문 자리');
     }
-    if (n === 6) cfg.noticeY = 60;     // 근정전 알림창이 뜨는 지점 — 📝 확인 대기
+    // 근정전 알림창은 들어서면 뜬다(자리 값 없음) · 실마리 곳(spots) · 관리(officers) · 높이마다 폭(walk.bands) · 키(scale)는 그림이 오면 잰다(README 5절)
     if (n === 8) { cfg.audienceY = 30; delete cfg.exitY; extra += label(w / 2, h * 0.26, '여기 닿으면 알현'); }
     if ([2, 3, 4, 5, 7].includes(n)) delete cfg.exitY;
   } else if (name.startsWith('bg_front_')) {

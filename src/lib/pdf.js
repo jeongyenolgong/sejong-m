@@ -2,6 +2,7 @@
 // 판 하나 = 한 쪽 · 차례는 넘겨 본 그대로 · 서버 없이 브라우저 안에서 만든다.
 // 판을 캔버스에 직접 그려 그림으로 담는다 — 한글 글꼴(고운바탕)을 PDF에 따로 싣지 않아도 글자가 깨지지 않고,
 // 기기·브라우저마다 결과가 같다. 판의 치수·글자 크기는 화면과 같은 칸(u) 값을 쓴다.
+// 디자인은 화면의 갈무리 판·서약서 판 그대로다(디13) — 본선 한지 · 빈칸의 치자빛 형광펜 띠(디4-6) · 서약서 두 겹 틀(디12) · 체크 칸은 찍힌 도장 모양.
 import { t } from './text.js';
 
 const U = 24;                       // PDF용 한 칸의 픽셀 — 판 64칸 = 1536px
@@ -54,10 +55,15 @@ function drawLines(g, lines, cx, top, lineH, fontPx) {
     const y = top + i * lineH + lineH / 2;
     for (const wd of line) {
       if (wd.blank) {
+        // 빈칸 형광펜 — 칸(줄 높이 1.3)의 38%~100% (화면 .blank와 같다)
+        const boxH = fontPx * 1.3, boxTop = y - boxH / 2 + fontPx * 0.06;
+        g.fillStyle = 'rgba(226,184,84,.5)';
+        g.fillRect(x, boxTop + boxH * 0.38, wd.w, boxH * 0.62);
+        g.fillStyle = INK;
         g.fillText(wd.text, x + 0.3 * U, y);
         g.strokeStyle = 'rgba(31,28,23,.5)';
         g.lineWidth = 2;
-        g.beginPath(); g.moveTo(x, y + fontPx * 0.72); g.lineTo(x + wd.w, y + fontPx * 0.72); g.stroke();
+        g.beginPath(); g.moveTo(x, boxTop + boxH); g.lineTo(x + wd.w, boxTop + boxH); g.stroke();
       } else {
         g.fillText(wd.text, x, y);
       }
@@ -110,6 +116,12 @@ function sentenceCanvas(j, paper) {
 function pledgeCanvas(date, paper) {
   const [c, g] = boardCanvas(35.9, paper);
   const cx = c.width / 2;
+  // 틀 — 1 안쪽 굵은 먹선 0.28 + 1.65 안쪽 가는 먹선 (디12)
+  g.strokeStyle = INK;
+  g.lineWidth = 0.28 * U;
+  g.strokeRect(1.14 * U, 1.14 * U, c.width - 2.28 * U, c.height - 2.28 * U);
+  g.lineWidth = 2;
+  g.strokeRect(1.65 * U, 1.65 * U, c.width - 3.3 * U, c.height - 3.3 * U);
   let y = 3.4 * U;
   const center = (text, font, color = INK) => {
     g.font = font; g.fillStyle = color;
@@ -132,13 +144,14 @@ function pledgeCanvas(date, paper) {
   y += 1.8 * U;
   // 체크 칸 + 「위와 같이 서약합니다.」
   const label = t('O-06');
-  const box = 2.1 * U, gap = U;
+  // 체크 칸 — 찍힌 도장 모양: 낙관 붉은빛으로 가득 차고 한지색 ✓ (디12)
+  const box = 2.6 * U, gap = U;
   const total = box + gap + g.measureText(label).width;
   const bx = cx - total / 2;
-  g.strokeStyle = INK; g.lineWidth = 2;
-  g.strokeRect(bx, y - box / 2, box, box);
-  g.strokeStyle = SEAL; g.lineWidth = 0.28 * U;
-  g.beginPath(); g.moveTo(bx + box * 0.25, y); g.lineTo(bx + box * 0.45, y + box * 0.25); g.lineTo(bx + box * 0.78, y - box * 0.28); g.stroke();
+  g.fillStyle = SEAL;
+  g.fillRect(bx, y - box / 2, box, box);
+  g.strokeStyle = '#F3ECDB'; g.lineWidth = 0.32 * U; g.lineCap = 'square';
+  g.beginPath(); g.moveTo(bx + box * 0.27, y + box * 0.02); g.lineTo(bx + box * 0.44, y + box * 0.2); g.lineTo(bx + box * 0.75, y - box * 0.24); g.stroke();
   g.fillStyle = INK;
   g.fillText(label, bx + box + gap, y);
   y += 3 * U;

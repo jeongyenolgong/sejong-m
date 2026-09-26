@@ -5,24 +5,58 @@
   "clouds": [
     {
       "file": "cut_cloud_1.webp",
-      "x": 9.9,
-      "y": 7.19,
-      "w": 11.91,
-      "duration": 90
+      "x": 12.17,
+      "y": 7.29,
+      "w": 16.54,
+      "duration": 150
     },
     {
       "file": "cut_cloud_2.webp",
-      "x": 50.07,
-      "y": 17.92,
-      "w": 6.38,
+      "x": 46.03,
+      "y": 1.77,
+      "w": 14.71,
       "duration": 120
     },
     {
       "file": "cut_cloud_3.webp",
-      "x": 73.11,
-      "y": 12.29,
-      "w": 9.7,
-      "duration": 150
+      "x": 73.24,
+      "y": 12.08,
+      "w": 14.39,
+      "duration": 170
+    }
+  ],
+  "birds": [
+    {
+      "file": "cut_crane_1.webp",
+      "x": 6.38,
+      "y": 15.0,
+      "w": 3.71,
+      "dir": 1,
+      "duration": 70
+    },
+    {
+      "file": "cut_crane_2.webp",
+      "x": 36.46,
+      "y": 9.48,
+      "w": 3.65,
+      "dir": 1,
+      "duration": 85
+    },
+    {
+      "file": "cut_crane_3.webp",
+      "x": 64.84,
+      "y": 10.52,
+      "w": 3.19,
+      "dir": -1,
+      "duration": 78
+    },
+    {
+      "file": "cut_crane_4.webp",
+      "x": 91.15,
+      "y": 19.06,
+      "w": 3.32,
+      "dir": -1,
+      "duration": 92
     }
   ]
 }

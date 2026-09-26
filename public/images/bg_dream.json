@@ -1,5 +1,42 @@
 {
   "file": "bg_dream.webp",
   "width": 1536,
-  "height": 960
+  "height": 960,
+  "clouds": {
+    "pieces": [
+      {
+        "file": "cut_dream_1.webp",
+        "x": 0.0,
+        "y": 0.0,
+        "w": 9.77,
+        "side": -1
+      },
+      {
+        "file": "cut_dream_2.webp",
+        "x": 0.0,
+        "y": 77.08,
+        "w": 30.6,
+        "side": -1
+      },
+      {
+        "file": "cut_dream_3.webp",
+        "x": 89.19,
+        "y": 0.0,
+        "w": 10.81,
+        "side": 1
+      },
+      {
+        "file": "cut_dream_4.webp",
+        "x": 69.66,
+        "y": 78.12,
+        "w": 30.34,
+        "side": 1
+      }
+    ],
+    "curtain": {
+      "left": "cut_dream_curtain_l.webp",
+      "right": "cut_dream_curtain_r.webp",
+      "w": 62
+    }
+  }
 }

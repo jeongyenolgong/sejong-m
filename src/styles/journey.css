@@ -1,42 +1,65 @@
-/* ── ④ 지도 · ⑤ 문 앞 · ⑥ 알현 — 캐릭터 · 조작키 · 미니맵 · 알림창 ── */
+/* ── ④ 지도 · ⑤ 문 앞 · ⑥ 알현 — 캐릭터 · 조작키 · 미니맵 · 알림창 · 안내문 ── */
 .spot { position: absolute; inset: 0; }
 .scene.overlay { pointer-events: none; z-index: 5; }
 .layer { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
 .layer > * { pointer-events: auto; }
 
-/* 캐릭터 — 발 자리(left/top)를 기준으로 선다 */
+/* 캐릭터 — 발 자리(left/top)를 기준으로 선다 · 몸 / 왼다리 / 오른다리 세 장을 겹친다 (디8) */
 .walker {
-  position: absolute; width: auto; transform: translate(-50%, -100%);
+  position: absolute; transform: translate(-50%, -100%);
   transform-origin: 50% 100%; pointer-events: none; z-index: 6;
   transition: opacity var(--fade, 400ms) ease;
 }
-/* 🧪 걸음 그림이 없는 동안은 한 장이 가볍게 들썩이며 미끄러진다 */
+.walker .sway { position: absolute; inset: 0; transform-origin: 50% 100%; }
+.walker .part { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* 걷기 — 한 걸음 0.42초 들썩임 + 몸이 발바닥 가운데를 축으로 ±1.6° 기움(0.84초)
+   + 다리는 가랑이 높이를 축으로 번갈아 세로 93%로 짧아짐(두 다리는 반 박자 어긋남) · 멈추면 제자리 */
 .walker.walking { animation: bob .42s ease-in-out infinite; }
 @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -1.2%; } }
+.walker.walking .sway { animation: sway .84s ease-in-out infinite; }
+@keyframes sway { 0%, 100% { transform: rotate(-1.6deg); } 50% { transform: rotate(1.6deg); } }
+.walker .part.L, .walker .part.R { transform-origin: 50% var(--yc, 69%); }
+.walker.walking .part.L { animation: step .84s ease-in-out infinite; }
+.walker.walking .part.R { animation: step .84s ease-in-out infinite; animation-delay: -.42s; }
+@keyframes step { 0%, 50%, 100% { transform: scaleY(1); } 25% { transform: scaleY(.93); } }
 .walker.bump { animation: bump-back .24s ease; }
 @keyframes bump-back { 50% { translate: 0 3%; } }
 .noticing .walker, .walker.off { opacity: 0; }
 
-/* 조작키 ◀ ▲ ▶ — 화면 아래 가운데 */
+/* 조작키 ◀ ▲ ▶ — 화면 아래 가운데 · 정사각 5.4 · 표시는 먹색 삼각형을 그린다 (디4-1) */
 .keys {
   position: absolute; left: 50%; bottom: calc(4.2 * var(--u)); transform: translateX(-50%); z-index: 20;
   display: flex; gap: calc(1.5 * var(--u)); transition: opacity .4s ease;
 }
 .keys.off { opacity: 0; pointer-events: none; }
 .key {
-  font-size: calc(2.5 * var(--u)); line-height: 1; color: var(--meok);
-  background: rgba(243, 236, 219, .75); border: 1px solid var(--meok);
-  padding: calc(1.2 * var(--u)) calc(2.6 * var(--u)); cursor: pointer;
+  width: calc(5.4 * var(--u)); height: calc(5.4 * var(--u)); padding: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 0;
   touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
 }
-.key.on { background: var(--meok); color: var(--hanji-hi); }
+.key::before { content: ""; width: calc(1.9 * var(--u)); height: calc(1.9 * var(--u)); background: currentColor; }
+.key.k-u::before { clip-path: polygon(50% 8%, 100% 92%, 0 92%); }
+.key.k-l::before { clip-path: polygon(8% 50%, 92% 0, 92% 100%); }
+.key.k-r::before { clip-path: polygon(92% 50%, 8% 0, 8% 100%); }
+/* 캐릭터나 곳이 키 뒤에 겹칠 때만 옅게 — 눌리는 것은 그대로 (2026-09-25) */
+.key.see { opacity: .45; }
 
-/* 미니맵 — 오른쪽 위에 떠 있는 상자 · 가로 8.5 (「육조거리」가 줄바꿈 없이 드는 폭) */
+/* 조작키 바로 위 가운데 한 줄 — 튜토리얼 걷기 안내 U-01 · U-02 · U-03 · 근정전 U-11 */
+.guide-line {
+  position: absolute; left: 50%; bottom: calc(4.2 * var(--u) + 5.4 * var(--u) + 1.6 * var(--u)); transform: translateX(-50%); z-index: 21;
+  width: max-content; max-width: calc(100vw - 4 * var(--u)); margin: 0; text-align: center;
+  font-size: var(--f3); line-height: 1.5; color: var(--meok); pointer-events: none;
+  text-shadow: 0 0 calc(.5 * var(--u)) var(--hanji-hi), 0 0 calc(1.2 * var(--u)) var(--hanji-hi), 0 0 calc(2.4 * var(--u)) rgba(243, 236, 219, .8);
+  opacity: 0; transition: opacity .4s ease;
+}
+.guide-line.on { opacity: 1; }
+
+/* 미니맵 — 오른쪽 위에 떠 있는 상자 · 폭은 가장 긴 이름(「육조거리」)이 한 줄로 드는 만큼 스스로 잰다 (디7) */
 .minimap {
-  position: absolute; top: calc(2.4 * var(--u)); right: calc(2.4 * var(--u)); width: calc(8.5 * var(--u)); z-index: 20;
+  position: absolute; top: calc(2.4 * var(--u)); right: calc(2.4 * var(--u)); width: max-content; z-index: 20;
   background: rgba(243, 236, 219, .9); border: 1px solid rgba(31, 28, 23, .34);
   box-shadow: 0 calc(.8 * var(--u)) calc(2 * var(--u)) rgba(31, 28, 23, .18);
-  display: flex; flex-direction: column; padding: calc(1.1 * var(--u)) calc(.8 * var(--u));
+  display: flex; flex-direction: column; padding: calc(1.1 * var(--u)) calc(.8 * var(--u)) calc(1.1 * var(--u)) 0;
   pointer-events: none;
 }
 .mrow { height: calc(2.5 * var(--u)); display: flex; align-items: center; gap: calc(.7 * var(--u)); padding-left: calc(1.1 * var(--u)); position: relative; }
@@ -46,14 +69,13 @@
 .mrow.past .mdot { background: var(--meok); }
 .mrow.future .mname { color: rgba(31, 28, 23, .34); }
 .mrow.future .mdot { border-color: rgba(31, 28, 23, .34); }
-.mrow.now::before { content: ""; position: absolute; inset: calc(.1 * var(--u)) calc(.3 * var(--u)); background: rgba(233, 224, 204, .95); border: 1px solid rgba(31, 28, 23, .18); }
-.mrow.now .mdot { background: var(--seal); border-color: var(--seal); transform: scale(1.18); }
-.mrow.now { animation: breathe 2.8s ease-in-out infinite; }
-@keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: .72; } }
+/* 지금 자리 — 네모 바탕 없이 붉은 동그라미만 2.8초로 숨 쉰다 */
+.mrow.now .mdot { background: var(--seal); border-color: var(--seal); transform: scale(1.18); animation: dot-breathe 2.8s ease-in-out infinite; }
+@keyframes dot-breathe { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
 .noticing .minimap { opacity: 1; }
 
-/* 한지 바탕 — 알림창 · 판 · 갈무리 · 서약서는 본선 한지 그림을 판 크기로 깐다 */
-.paper { background-color: var(--hanji-hi); background-size: 100% 100%; border: 1px solid rgba(31, 28, 23, .42); box-shadow: 0 calc(1 * var(--u)) calc(2.4 * var(--u)) rgba(31, 28, 23, .22); }
+/* 한지 바탕 — 알림창 · 판 · 갈무리 · 서약서는 본선 한지 그림을 판 크기로 깐다 · 먹 42% 한 줄 + 판 그림자 (디4-4) */
+.paper { background-color: var(--hanji-hi); background-size: 100% 100%; border: 1px solid rgba(31, 28, 23, .42); box-shadow: var(--shadow); }
 
 /* 알림창 — 가로 64 × 세로 33 · 문 한가운데 */
 .notice {
@@ -70,15 +92,20 @@
 .notice-body + .notice-body { margin-top: calc(1.4 * var(--u)); }
 .notice-foot { margin-top: auto; padding-top: calc(2.4 * var(--u)); }
 .notice-close { letter-spacing: .16em; text-indent: .16em; padding: calc(.8 * var(--u)) calc(3 * var(--u)); }
+/* 가운데 안내문 — 게임이 알려 주는 말(U-05 · U-07 · U-08 · U-10 · U-12~U-30) · 알림창과 같은 종이·폭 · 높이는 글만큼 */
+.notice.guide { height: auto; padding: calc(3.2 * var(--u)) calc(4.4 * var(--u)) calc(2.8 * var(--u)); }
+.notice.guide .notice-body { text-align: center; font-size: var(--f3); line-height: 1.8; }
 
-/* 문 앞 — 문짝은 경첩(바깥쪽 세로 변)을 축으로 돈다 */
+/* 인물의 말 — 자막 자리 · 뒤는 딤 · 화면을 누르면 힌트 퀴즈 (U-06 · U-09) */
+.say-tap { position: absolute; inset: 0; z-index: 45; background: transparent; border: 0; padding: 0; cursor: pointer; }
+/* 글빛은 다른 자막과 같은 먹색 (2026-09-26 🙋 「다른 것과 자막색 통일」) */
+.say { z-index: 46; opacity: 0; transition: opacity .4s ease; }
+.say.on { opacity: 1; }
+
+/* 문 앞 — 문짝은 경첩(바깥쪽 세로 변)을 축으로 돈다 · 뒤에 「문 너머」(양옆 칸의 너머를 이어 붙인 것 · 기8) */
 .gate .doors { position: absolute; inset: 0; perspective: 1400px; pointer-events: none; }
 .door { position: absolute; }
 .door.left { transform-origin: 0% 50%; }
 .door.right { transform-origin: 100% 50%; }
-.gate-light {
-  position: absolute; opacity: 0; transition: opacity .6s ease;
-  background: radial-gradient(60% 70% at 50% 55%, #fffaf0 0%, #fbf1d6 60%, rgba(251, 241, 214, .6) 100%);
-}
-.gate-light.on { opacity: 1; }
+.scene > .beyond { position: absolute; pointer-events: none; }
 .noticing .keys { opacity: 0; pointer-events: none; }

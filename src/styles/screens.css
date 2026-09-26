@@ -1,4 +1,4 @@
-/* ── ① 시작 ── 📝 제목·부제 크기는 디자인 단계 */
+/* ── ① 시작 ── 제목 7.6 굵게 · 부제 2.5 (디4-8) · 딤 없이 글자 둘레에만 한지빛 번짐 (디1) */
 .start .title-stack {
   position: absolute; left: 0; right: 0; top: 0; bottom: calc(13 * var(--u));
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -7,14 +7,21 @@
 .start .title {
   margin: 0; font-weight: 700; font-size: calc(7.6 * var(--u)); line-height: 1.15; text-align: center;
   text-wrap: balance;
+  text-shadow: 0 0 calc(.5 * var(--u)) var(--hanji-hi), 0 0 calc(1.2 * var(--u)) var(--hanji-hi), 0 0 calc(2.4 * var(--u)) var(--hanji-hi), 0 0 calc(3.6 * var(--u)) rgba(243, 236, 219, .8);
 }
 .start .subtitle {
   margin: calc(2.6 * var(--u)) 0 0; font-size: calc(2.5 * var(--u)); letter-spacing: .06em;
-  color: var(--meok-soft);
+  color: var(--meok); font-weight: 700;
+  text-shadow: 0 0 calc(.3 * var(--u)) var(--hanji-hi), 0 0 calc(.8 * var(--u)) var(--hanji-hi), 0 0 calc(1.6 * var(--u)) var(--hanji-hi), 0 0 calc(2.6 * var(--u)) rgba(243, 236, 219, .85);
 }
 .start .cloud { pointer-events: none; }
+/* 학 — 떠 있는 층이 가로지르고, 안의 그림이 살짝 오르내린다 (디2) */
+.start .bird { position: absolute; pointer-events: none; }
+.start .bird img { display: block; width: 100%; }
 
-/* ── ② 캐릭터 선택 ── */
+/* ── ② 캐릭터 선택 ── 배경만 흐리게(시작 그림은 둔다 · 위의 글·캐릭터·버튼은 제 색) (디3) */
+.select .scene-bg { filter: blur(calc(.9 * var(--u))); transform: scale(1.06); }
+.select .scene::after { content: ""; position: absolute; inset: 0; background: rgba(243, 236, 219, .5); }
 .select .select-stack {
   position: absolute; left: 0; right: 0; top: 0; bottom: calc(13 * var(--u));
   display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5;
@@ -26,27 +33,36 @@
   background: none; border: 0; padding: 0; cursor: pointer;
 }
 .pick:focus-visible { outline: 2px solid var(--seal); outline-offset: 6px; }
-/* 고른 쪽 그림만 진해진다 — 이름·설명·테두리는 건드리지 않는다 (0-1절) */
+/* 처음엔 두 캐릭터 제 색 · 하나를 고르면 다른 하나가 50%로 흐려진다 (디3) */
 .pick .figure {
-  height: calc(28 * var(--u)); width: auto; opacity: .5;
+  height: calc(28 * var(--u)); width: auto; opacity: 1;
   transition: opacity .2s ease, filter .2s ease;
 }
-.pick[aria-pressed="true"] .figure { opacity: 1; filter: drop-shadow(0 calc(.9 * var(--u)) calc(1.1 * var(--u)) rgba(31, 28, 23, .28)); }
+.pair.chosen .pick[aria-pressed="false"] .figure { opacity: .5; }
+.pick[aria-pressed="true"] .figure { filter: drop-shadow(0 calc(.9 * var(--u)) calc(1.1 * var(--u)) rgba(31, 28, 23, .28)); }
 .pick .name { font-size: calc(2.2 * var(--u)); letter-spacing: .08em; }
-.pick .desc { width: calc(19 * var(--u)); font-size: var(--f5); line-height: 1.7; color: var(--meok-soft); text-align: center; }
+.pick .desc { font-size: var(--f5); line-height: 1.7; color: var(--meok-soft); text-align: center; }
+/* 설명은 문장마다 한 줄 · 두 줄로 끝난다 (디3 — 글은 그대로 · 화면에서 나눔) */
+.pick .desc span { display: block; white-space: nowrap; }
 
 /* ── ③ 프롤로그 · 알현 자막 ── */
 .tapzone { position: absolute; inset: 0; z-index: 10; background: transparent; border: 0; padding: 0; cursor: pointer; }
+/* 넘김 ‹ › (B-05) — 디4-1 버튼 식구 · 정사각 5.4 · 먹선 꺾쇠를 그린다(글자는 안 보이게) (디5)
+   어두운 화면(갈무리)에서도 같은 한지 조각 — 글자 크기·보이기를 되살리는 규칙을 두지 않는다 */
 .side {
   position: absolute; top: 50%; transform: translateY(-50%); z-index: 12;
-  background: transparent; border: 0; padding: calc(1.6 * var(--u)) calc(1.2 * var(--u)); cursor: pointer;
-  font-size: calc(5 * var(--u)); line-height: 1; color: var(--meok); opacity: .45;
+  width: calc(5.4 * var(--u)); height: calc(5.4 * var(--u)); padding: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 0; line-height: 1;
 }
+.side::before {
+  content: ""; width: calc(1.35 * var(--u)); height: calc(1.35 * var(--u));
+  border-left: calc(.3 * var(--u)) solid currentColor; border-bottom: calc(.3 * var(--u)) solid currentColor;
+  transform: translateX(calc(.3 * var(--u))) rotate(45deg);
+}
+.side.r::before, .side.g-next::before { transform: translateX(calc(-.3 * var(--u))) rotate(-135deg); }
 .side.l { left: calc(1.6 * var(--u)); }
 .side.r { right: calc(1.6 * var(--u)); }
-.side:disabled { opacity: 0; cursor: default; }
-.side:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
-.dark .side, .on-dark .side { color: var(--hanji-hi); opacity: .6; }
+.side:disabled { opacity: 0; pointer-events: none; }
 /* 자막 — 화면 아래 가운데(버튼이 없어 그 자리를 쓴다) */
 .caption {
   position: absolute; left: 50%; bottom: calc(7 * var(--u)); transform: translateX(-50%); z-index: 11;
@@ -55,10 +71,9 @@
   pointer-events: none;
   text-shadow: 0 0 calc(1.2 * var(--u)) rgba(243, 236, 219, .9);
 }
-.dark .caption { color: var(--hanji-hi); text-shadow: 0 0 calc(1.2 * var(--u)) rgba(0, 0, 0, .7); }
 
 /* 컷 3 — 떠올라 흩어지는 글자 */
-.shatter-line { transition: bottom var(--rise-ms, 900ms) cubic-bezier(.3, 0, .2, 1); white-space: nowrap; width: auto; }
+.shatter-line { transition: bottom var(--rise-ms, 1350ms) cubic-bezier(.3, 0, .2, 1); white-space: nowrap; width: auto; }
 .shatter-line.risen { bottom: 52%; }
 .shatter-line .syl { display: inline-block; transition: opacity .5s ease; }
 .shatter-line .syl.gone { opacity: 0; }
@@ -68,7 +83,11 @@
   /* 가장자리 번짐 두 겹 */
   text-shadow: 0 0 calc(.25 * var(--u)) rgba(46, 38, 32, .55), 0 0 calc(.8 * var(--u)) rgba(46, 38, 32, .25);
   opacity: 0; transform: translate(0, 0) rotate(0);
-  transition: transform var(--ms, 3400ms) cubic-bezier(.22, .61, .36, 1), opacity var(--ms, 3400ms) ease;
+  transition: transform var(--ms, 5100ms) cubic-bezier(.22, .61, .36, 1), opacity var(--ms, 5100ms) ease;
 }
 .ink-piece.go { opacity: .92; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); animation: ink-wobble 2.6s ease-in-out infinite alternate; }
 @keyframes ink-wobble { from { translate: 0 0; } to { translate: 0 calc(.35 * var(--u)); } }
+
+/* 컷 4 꿈 — 가장자리 구름이 양옆으로 천천히 걷히며 세종과 일월오봉도가 드러나고, 남은 구름은 제자리에서 둥실둥실 (그2) */
+.prologue .dream-cloud, .prologue .dream-curtain { position: absolute; pointer-events: none; }
+.prologue .dream-curtain { top: 0; height: 100%; }

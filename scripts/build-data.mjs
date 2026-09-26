@@ -90,6 +90,13 @@ for (const j of jamo) {
   }
 }
 
+// ── 튜토리얼 연습 판 — 자모 조합 「연습」 시트(J00) · 힌트 퀴즈 「연습」 시트(G00-1 · 이 학년 줄만) ──
+//   본편 11문장과 따로 굽는다 — 갈무리 판·PDF(11장)에 섞이지 않는다 (2026-09-23 기1)
+const practiceJamo = (await rows('jamo.xlsx', '연습')).map((r) => ({
+  id: r['ID'], gate: r['문'], bolt: Number(r['빗장']), word: r['낱말'], sentence: r['문장'],
+  before: r['문장 앞'], after: r['문장 뒤'], syllables: r['자모'].split('/').map((s) => s.trim().split(/\s+/)),
+}));
+
 // ── 점검 퀴즈 — 이 학년 시트만 ──
 const check = (await rows('quiz_check.xlsx', SHEET)).map((r) => {
   const n = grade === 'e' ? 3 : 4;
@@ -100,8 +107,8 @@ const check = (await rows('quiz_check.xlsx', SHEET)).map((r) => {
   return { id: r['문항ID'], gate: r['문'], bolt: Number(r['빗장']), word: r['낱말'], question: r['물음'], answer: Number(r['정답번호']), options };
 });
 
-// ── 힌트 퀴즈 — 이 학년 시트만 ──
-const hint = (await rows('quiz_hint.xlsx', SHEET)).map((r) => {
+// ── 힌트 퀴즈 — 이 학년 시트만 (연습 시트는 「학년」 칸으로 이 학년 줄만) ──
+const hintRow = (r) => {
   const n = grade === 'e' ? 3 : 4;
   const options = [];
   for (let i = 1; i <= n; i++) options.push(r[`보기${i}`]);
@@ -110,10 +117,16 @@ const hint = (await rows('quiz_hint.xlsx', SHEET)).map((r) => {
     episode: r['일화 문장'] || '', question: r['물음'], options,
     answer: Number(r['정답번호']), shuffle: r['보기 순서'] !== '차례대로',
   };
-});
+};
+const practiceHint = (await rows('quiz_hint.xlsx', '연습')).filter((r) => r['학년'] === SHEET).map(hintRow);
+const hint = (await rows('quiz_hint.xlsx', SHEET)).map(hintRow);
+for (const j of practiceJamo) {
+  if (j.before + j.word + j.after !== j.sentence) console.warn(`  ⚠️ ${j.id}: 문장 앞 + 낱말 + 문장 뒤가 문장과 다르다`);
+}
 
 console.log(`데이터를 구웠다 (학년: ${SHEET})`);
 write('ui.json', ui);
 write('jamo.json', jamo);
 write('check.json', check);
 write('hint.json', hint);
+write('practice.json', { jamo: practiceJamo[0], hint: practiceHint });

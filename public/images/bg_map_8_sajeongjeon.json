@@ -2,14 +2,23 @@
   "file": "bg_map_8_sajeongjeon.webp",
   "width": 1536,
   "height": 960,
-  "walk": {
-    "minX": 12,
-    "maxX": 88
-  },
   "start": {
     "x": 50,
     "y": 85
   },
-  "charHeight": 12,
-  "audienceY": 48
+  "walk": {
+    "minX": 5,
+    "maxX": 95
+  },
+  "scale": [
+    [
+      58,
+      15.5
+    ],
+    [
+      88,
+      21.8
+    ]
+  ],
+  "audienceY": 58
 }

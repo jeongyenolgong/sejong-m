@@ -17,23 +17,32 @@
 .aside .underboard { opacity: 1; }
 .board.shake { animation: shake-x 340ms ease; }
 
+/* 세 판 모두 위아래 여백이 같다 — 지시문 위 끝은 판 위에서 2.8 · 맨 아래 줄 아래 끝은 판 아래에서 2.8 · 사이는 같은 간격 (디4-7) */
 .panel {
-  position: absolute; inset: 0; padding: calc(2.4 * var(--u)) calc(3 * var(--u));
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: absolute; inset: 0; padding: calc(2.8 * var(--u)) calc(3 * var(--u));
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between;
 }
-/* 머리 안내 Q-01 · Q-03 · Q-04 — 같은 자리 · ④ 1.6 굵게 · 오른쪽 위 버튼과 같은 높이 */
+/* 머리 안내 Q-01 · Q-03 · Q-04 — 같은 자리 · ④ 1.6 굵게 */
 .panel .head {
-  position: absolute; left: 0; right: 0; top: calc(1.35 * var(--u)); margin: 0; text-align: center;
+  width: 100%; margin: 0; text-align: center;
   font-size: var(--f4); font-weight: 700; line-height: 1.5; letter-spacing: .03em;
 }
-/* 판 오른쪽 위 — 실마리 · 돌아가기 */
-.panel .corner { position: absolute; top: calc(.9 * var(--u)); right: calc(.9 * var(--u)); z-index: 2; padding: calc(.6 * var(--u)) calc(1.4 * var(--u)); letter-spacing: .06em; text-indent: .06em; }
+/* 판 오른쪽 위 — 실마리 · 돌아가기 · 지시문 줄 가운데 높이 · 판 오른쪽에서 3 */
+.panel .corner { position: absolute; top: calc(2.8 * var(--u) + 1.2 * var(--u)); transform: translateY(-50%); right: calc(3 * var(--u)); z-index: 2; padding: calc(.6 * var(--u)) calc(1.4 * var(--u)); letter-spacing: .06em; text-indent: .06em; }
+/* 판 왼쪽 위 — 「2 / 3」 몇 번째인가 · 숫자만 · 테두리 없는 글자 · 실마리 글씨와 같은 크기 (기5 · 기6) */
+.panel .count { position: absolute; top: calc(2.8 * var(--u) + 1.2 * var(--u)); transform: translateY(-50%); left: calc(3 * var(--u)); margin: 0; font-size: var(--f4); letter-spacing: .06em; line-height: 1; }
+/* 연습 판 실마리 반짝임 — 둘레에 낙관 붉은빛이 천천히 번졌다 사라지기를 되풀이 · 누르면 멈춘다 (기1) */
+.btn.glow { animation: hint-glow 1.2s ease-in-out infinite; }
+@keyframes hint-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(158, 59, 47, 0); } 50% { box-shadow: 0 0 calc(1.2 * var(--u)) calc(.5 * var(--u)) rgba(158, 59, 47, .55); } }
 
 /* ① 자모 조합 */
-.panel-jamo { padding-top: calc(2.4 * var(--u) + 4.2 * var(--u)); gap: calc(.6 * var(--u)); justify-content: center; }
 .panel-jamo .sentence { margin: 0; font-size: var(--f3); line-height: 1.95; text-align: center; }
-/* 빈칸 — 들어갈 낱말을 안 보이게 넣어 두어 칸이 그 길이가 된다 · 두 줄로 쪼개지지 않는다 */
-.blank { display: inline-block; white-space: nowrap; border-bottom: 1px solid rgba(31, 28, 23, .5); }
+/* 빈칸 — 들어갈 낱말을 안 보이게 넣어 두어 칸이 그 길이가 된다 · 두 줄로 쪼개지지 않는다
+   빈칸에만 치자빛 형광펜 띠(칸 높이의 38%~100%) · 밑줄은 그대로 · 칸 줄 높이 1.3(글줄에 붙는다) (디4-6) */
+.blank {
+  display: inline-block; white-space: nowrap; border-bottom: 1px solid rgba(31, 28, 23, .5); line-height: 1.3;
+  background: linear-gradient(transparent 38%, rgba(226, 184, 84, .5) 38%, rgba(226, 184, 84, .5) 100%);
+}
 .blank .word { opacity: 0; padding: 0 calc(.3 * var(--u)); transition: opacity 1.6s ease-in-out; }
 .blank.filled .word { opacity: 1; }
 .work {
@@ -57,9 +66,8 @@
 .syl-box .j { font-size: var(--f2); }
 /* 음절이 다 차면 그 칸에서 한 글자로 모인다 — ① 4.7 */
 .syl-box.done { font-size: var(--f1); border-style: solid; border-color: rgba(31, 28, 23, .6); grid-template-columns: 1fr; grid-template-rows: 1fr; }
-/* 커서 — 깜빡이는 세로 막대 (📝 모양은 디자인 단계) */
-.syl-box.cursor::after { content: ""; position: absolute; left: 50%; top: 22%; width: 2px; height: 56%; background: var(--meok); animation: caret 1.05s steps(1) infinite; }
-@keyframes caret { 50% { opacity: 0; } }
+/* 커서 — 지금 채울 칸의 테두리가 낙관 붉은 2px 실선 · 2.8초로 숨 쉰다 · 칸 안에는 아무것도 그리지 않는다 (디4-5) */
+.syl-box.cursor { border: 2px solid var(--seal); animation: cursor-breathe 2.8s ease-in-out infinite; }
 .syl-box.shake { animation: shake-x 340ms ease; }
 .syl-box .wait, .syl-box.wait { color: transparent; }
 .syl-box.ink::before {
@@ -87,8 +95,11 @@
 }
 .howto { position: absolute; left: 0; right: 0; bottom: calc(.7 * var(--u)); margin: 0; text-align: center; font-size: var(--f5); line-height: 1.5; color: var(--meok-soft); }
 
+/* 조각 — 먹빛·번짐을 입히지 않는다(번짐은 프롤로그 컷 3에만) (디4-5) · 연습 판에서 실마리 전에는 움직이지 않는다 (기1) */
+.panel-jamo.locked .piece { cursor: default; }
+
 /* ② 힌트 퀴즈 */
-.panel-hint { gap: calc(1.5 * var(--u)); align-items: flex-start; padding-top: calc(2.4 * var(--u) + 4.2 * var(--u)); }
+.panel-hint { align-items: flex-start; }
 .panel-hint .episode { margin: 0; font-size: var(--f4); line-height: 1.75; }
 .panel-hint .question { margin: 0; font-size: var(--f3); line-height: 1.6; }
 .options { display: flex; gap: calc(1.5 * var(--u)); width: 100%; }
@@ -98,20 +109,24 @@
   transition: opacity .25s ease, background .2s ease, border-color .2s ease;
 }
 @media (hover: hover) { .option:enabled:hover { background: rgba(31, 28, 23, .07); } }
-/* 틀린 보기 — 흐려지고 가로줄 (📝 색·굵기는 디자인 단계) */
-.option.gone { opacity: .28; text-decoration: line-through; cursor: default; }
+/* 틀린 보기 — 전체를 흐리지 않고 글자 먹 30% · 테두리 먹 20% · 가로줄 먹 55% 1.5px (디4-6) */
+.option.gone { color: rgba(31, 28, 23, .3); border-color: rgba(31, 28, 23, .2); text-decoration: line-through; text-decoration-thickness: 1.5px; text-decoration-color: rgba(31, 28, 23, .55); cursor: default; }
 /* 맞힌 보기 — 나머지는 물러나고, 고른 보기는 먹빛으로 차며 살짝 커졌다 내려앉는다 */
 .option.away { opacity: .12; cursor: default; }
 .option.right { background: var(--meok); color: var(--hanji-hi); border-color: var(--meok); animation: settle .55s cubic-bezier(.3, 0, .2, 1); opacity: 1; }
 @keyframes settle { 0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
 
 /* ③ 점검 퀴즈 */
-.panel-check { gap: calc(1.5 * var(--u)); align-items: flex-start; padding-top: calc(2.4 * var(--u) + 4.2 * var(--u)); }
+.panel-check { align-items: flex-start; }
 .panel-check .question { margin: 0; font-size: var(--f3); line-height: 1.6; }
 .explain { margin: 0; width: 100%; font-size: var(--f5); line-height: 1.7; color: var(--meok); opacity: 0; transition: opacity .25s ease; }
 .explain.on { opacity: 1; }
 .explain.center { text-align: center; }
 .explain.sizer { position: absolute; visibility: hidden; left: calc(3 * var(--u)); right: calc(3 * var(--u)); width: auto; pointer-events: none; }
+/* 틀렸을 때 — 고른 포스터 문장을 인용선 + 뒤에 ✕ · 그 아래 0.6 뒤 해설 (디4-7) */
+.explain .picked { display: block; font-size: var(--f4); line-height: 1.6; margin-bottom: calc(.6 * var(--u)); color: rgba(31, 28, 23, .6); border-left: 3px solid rgba(31, 28, 23, .45); padding-left: calc(1 * var(--u)); }
+.explain .picked::after { content: "✕"; color: var(--meok); font-weight: 700; margin-left: calc(.7 * var(--u)); }
+.explain .why { display: block; }
 .code-row { display: flex; align-items: center; justify-content: center; gap: calc(2 * var(--u)); width: 100%; }
 .cells { display: flex; gap: calc(1 * var(--u)); cursor: text; outline: none; }
 .cells:focus-visible { outline: 2px solid var(--seal); outline-offset: calc(.6 * var(--u)); }
@@ -120,7 +135,7 @@
   display: flex; align-items: center; justify-content: center; font-size: var(--f2); line-height: 1;
 }
 .cells.stale .cell { color: var(--meok-soft); }
-.cell.cursor::after { content: ""; position: absolute; left: 50%; top: 22%; width: 2px; height: 56%; background: var(--meok); animation: caret 1.05s steps(1) infinite; }
+.cell.cursor { border-bottom: 2px solid var(--seal); animation: cursor-breathe 2.8s ease-in-out infinite; }
 /* 「통과」 낙관 — 판 한가운데 크게 · 1.2초 내내 고르게 찍힌다 (목업에서 만든 그대로 · 10-3-1) */
 .seal {
   position: absolute; left: 50%; top: 50%; z-index: 5; pointer-events: none;
@@ -146,3 +161,16 @@
   position: absolute; left: 0; top: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0;
   font-size: 16px; resize: none; caret-color: transparent; color: transparent; background: transparent;
 }
+
+/* 연습 판 — 점검 퀴즈 자리의 설명 (기1 · U-04) : 설명 글(위) · 태블릿 틀 안 점검 퀴즈 화면(왼쪽) · 포스터 한 장(오른쪽) · [닫기](아래)
+   두 그림은 높이가 같다 · 판 크기 그대로 */
+.panel-explain .lead { margin: 0; width: 100%; text-align: center; font-size: var(--f4); line-height: 1.7; }
+.panel-explain .pics { display: flex; align-items: center; justify-content: center; gap: calc(3 * var(--u)); height: calc(18.5 * var(--u)); }
+.panel-explain .tablet {
+  height: 100%; aspect-ratio: 1133 / 744; box-sizing: content-box; padding: calc(1 * var(--u)); border-radius: calc(1.4 * var(--u));
+  background: #2b2723; box-shadow: var(--shadow); display: flex;
+}
+.panel-explain .tablet img { width: 100%; height: 100%; display: block; border-radius: calc(.3 * var(--u)); }
+.panel-explain .poster { height: calc(100% + 2 * var(--u)); width: auto; display: block; box-shadow: var(--shadow); }
+/* 판을 둔 채 지도로 나가 있는 동안(튜토리얼 실마리 찾기) */
+.board-frame.away { display: none; }
