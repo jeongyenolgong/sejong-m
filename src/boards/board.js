@@ -150,12 +150,12 @@ export class Board {
 //   판은 본선 판과 같은 자리 · 어긋나게 얹힌 곁길 종이 · 왼쪽 위 「k / n」 · 맞히면 1.4초 뒤 · 「돌아가기」면 바로 걷힌다
 //   seal — 근정전 마지막 문제를 맞히면 판 한가운데 「통과」 낙관(점검 퀴즈와 같음 · 기6)
 //   → 'right' | 'back'
-export async function hintBoard(layer, dim, q, counter, { seal = false } = {}) {
+export async function hintBoard(layer, dim, q, counter, { seal = false, head, back } = {}) {
   const [paperMain, paperSide] = await papers();
   const under = el('div.underboard.paper', { style: { backgroundImage: `url("${paperMain}")` } });
   const board = el('div.board.paper', { style: { backgroundImage: `url("${paperSide}")` } });
   const frame = el('div.board-frame.aside', {}, [under, board]);
-  const hint = new HintPanel(q, { shakeTarget: () => board, counter });
+  const hint = new HintPanel(q, { shakeTarget: () => board, counter, head, back });
   board.append(hint.el);
   layer.append(frame);
   dim.classList.add('on');
@@ -183,7 +183,8 @@ class ExplainPanel {
     this.correct = new Promise((r) => { this.resolve = r; });
     const close = el('button.btn.notice-close', { type: 'button', text: t('B-08'), onclick: () => this.resolve() });
     this.el = el('div.panel.panel-explain', {}, [
-      el('p.lead', { text: t('U-04') }),
+      // 문장마다 한 줄 — 글은 그대로 · 화면에서 나눈다 (2026-09-26 🙋 「광화문부터는 단어를 완성한 뒤, 퀴즈를 풀어야 합니다. 줄바꿈해줘.」)
+      el('p.lead', {}, t('U-04').split(/(?<=[.!?]) /).map((l) => el('span.line', { text: l }))),
       el('div.pics', {}, [
         el('div.tablet', {}, [el('img', { src: imageUrl(pics.tablet), alt: '' })]),
         el('img.poster', { src: imageUrl(pics.poster), alt: '' }),

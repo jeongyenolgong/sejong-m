@@ -95,6 +95,7 @@
 /* 가운데 안내문 — 게임이 알려 주는 말(U-05 · U-07 · U-08 · U-10 · U-12~U-30) · 알림창과 같은 종이·폭 · 높이는 글만큼 */
 .notice.guide { height: auto; padding: calc(3.2 * var(--u)) calc(4.4 * var(--u)) calc(2.8 * var(--u)); }
 .notice.guide .notice-body { text-align: center; font-size: var(--f3); line-height: 1.8; }
+.notice.guide .line { display: block; }
 
 /* 인물의 말 — 자막 자리 · 뒤는 딤 · 화면을 누르면 힌트 퀴즈 (U-06 · U-09) */
 .say-tap { position: absolute; inset: 0; z-index: 45; background: transparent; border: 0; padding: 0; cursor: pointer; }

@@ -10,7 +10,7 @@ import { t } from '../lib/text.js';
 import { T } from '../lib/timing.js';
 
 export class HintPanel {
-  constructor(q, { shakeTarget, counter }) {
+  constructor(q, { shakeTarget, counter, head = 'Q-03', back = true }) {
     this.result = new Promise((r) => { this.resolve = r; });
     const order = q.options.map((_, i) => i);
     if (q.shuffle) shuffle(order);
@@ -34,9 +34,11 @@ export class HintPanel {
       return b;
     }));
     this.el = el('div.panel.panel-hint', {}, [
-      el('button.btn.corner', { type: 'button', text: t('B-06'), onclick: () => { if (!this.busy) { this.busy = true; this.resolve('back'); } } }),
+      // 근정전에서는 「돌아가기」가 없다 — 다 풀어야 지나가고 돌아가서 풀 자모 판이 없다 (2026-09-26)
+      back ? el('button.btn.corner', { type: 'button', text: t('B-06'), onclick: () => { if (!this.busy) { this.busy = true; this.resolve('back'); } } }) : null,
       counter ? el('p.count', { text: `${counter[0]} / ${counter[1]}`, 'aria-label': `${counter[1]}개 가운데 ${counter[0]}번째` }) : null,
-      el('p.head', { text: t('Q-03') }),
+      // 근정전은 Q-07(맞혀도 자모가 채워지지 않는다) · 문장마다 한 줄
+      el('p.head', {}, t(head).split(/(?<=[.!?]) /).map((l) => el('span.line', { text: l }))),
       q.episode ? el('p.episode', { text: q.episode }) : null,
       el('p.question', { text: q.question }),
       opts,

@@ -32,6 +32,7 @@
 /* 판 왼쪽 위 — 「2 / 3」 몇 번째인가 · 숫자만 · 테두리 없는 글자 · 실마리 글씨와 같은 크기 (기5 · 기6) */
 .panel .count { position: absolute; top: calc(2.8 * var(--u) + 1.2 * var(--u)); transform: translateY(-50%); left: calc(3 * var(--u)); margin: 0; font-size: var(--f4); letter-spacing: .06em; line-height: 1; }
 /* 연습 판 실마리 반짝임 — 둘레에 낙관 붉은빛이 천천히 번졌다 사라지기를 되풀이 · 누르면 멈춘다 (기1) */
+.panel .head .line { display: block; }
 .btn.glow { animation: hint-glow 1.2s ease-in-out infinite; }
 @keyframes hint-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(158, 59, 47, 0); } 50% { box-shadow: 0 0 calc(1.2 * var(--u)) calc(.5 * var(--u)) rgba(158, 59, 47, .55); } }
 
@@ -165,6 +166,7 @@
 /* 연습 판 — 점검 퀴즈 자리의 설명 (기1 · U-04) : 설명 글(위) · 태블릿 틀 안 점검 퀴즈 화면(왼쪽) · 포스터 한 장(오른쪽) · [닫기](아래)
    두 그림은 높이가 같다 · 판 크기 그대로 */
 .panel-explain .lead { margin: 0; width: 100%; text-align: center; font-size: var(--f4); line-height: 1.7; }
+.panel-explain .lead .line { display: block; }
 .panel-explain .pics { display: flex; align-items: center; justify-content: center; gap: calc(3 * var(--u)); height: calc(18.5 * var(--u)); }
 .panel-explain .tablet {
   height: 100%; aspect-ratio: 1133 / 744; box-sizing: content-box; padding: calc(1 * var(--u)); border-radius: calc(1.4 * var(--u));

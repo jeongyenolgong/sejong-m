@@ -305,7 +305,7 @@ async function courtOfficer(view) {
   while (o.qs.length) {
     const { q, n } = o.qs[0];
     const last = court.solved + 1 === court.total;
-    const r = await hintBoard(view.layer, view.dim, q, [n, court.total], { seal: last });
+    const r = await hintBoard(view.layer, view.dim, q, [n, court.total], { seal: last, head: 'Q-07', back: false });
     if (r !== 'right') break;                            // 「돌아가기」 — 이 문제는 남는다
     o.qs.shift();
     court.solved += 1;

@@ -34,8 +34,10 @@ export function notice(layer, dim, titleText, bodies) {
 
 export function guide(layer, dim, text) {
   const close = el('button.btn.notice-close', { type: 'button', text: t('B-08') });
+  // 실마리 곳 안내(U-05 · U-12~U-30)는 「다가가면」 뒤에서 줄을 바꾼다 — 글은 그대로 · 화면에서만 나눈다 (2026-09-26 🙋 「이렇게 2줄로 처리하자」)
+  const lines = text.split(/(?<=다가가면) (?=실마리를)/);
   const box = el('div.notice.guide.paper', { role: 'dialog', 'aria-label': text }, [
-    el('p.notice-body', { text }),
+    el('p.notice-body', {}, lines.map((l) => el('span.line', { text: l }))),
     el('div.notice-foot', {}, [close]),
   ]);
   return paperBox(layer, dim, box, close);
